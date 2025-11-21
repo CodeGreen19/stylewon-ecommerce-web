@@ -1,5 +1,6 @@
+import ProductsPage from "@/features/admin/catalog/products/pages/products-page";
 import React from "react";
 
 export default function page() {
-  return <div>this is products catalog page</div>;
+  return <ProductsPage />;
 }
