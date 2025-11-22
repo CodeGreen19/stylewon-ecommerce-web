@@ -6,6 +6,8 @@ import { Button } from "../ui/button";
 import { Crop, Trash } from "lucide-react";
 import { deleteAssert } from "./server/actions";
 import { LoadingSwap } from "../ui/loading-swap";
+import { useAddImage } from "./hooks/use-add-image";
+import { cn } from "@/lib/utils";
 
 export default function SiteFilesSection() {
   const { isPending, data, error } = useQuery({
@@ -26,7 +28,7 @@ export default function SiteFilesSection() {
   }
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 overflow-y-auto">
+    <div className="grid grid-cols-2 gap-1 lg:grid-cols-4 xl:grid-cols-6 overflow-y-auto">
       {data.map((item, i) => (
         <ImageCard key={i} publicId={item.publicId} url={item.secureUrl} />
       ))}
@@ -35,6 +37,7 @@ export default function SiteFilesSection() {
 }
 
 function ImageCard({ url, publicId }: { url: string; publicId: string }) {
+  const { images, addImage, removeImage } = useAddImage();
   const qc = useQueryClient();
   const { isPending, mutate } = useMutation({
     mutationFn: deleteAssert,
@@ -43,7 +46,13 @@ function ImageCard({ url, publicId }: { url: string; publicId: string }) {
     },
   });
   return (
-    <div className="flex-none p-1 border">
+    <div
+      onClick={() => (images.includes(url) ? removeImage(url) : addImage(url))}
+      className={cn(
+        "flex-none p-1 border transition-all",
+        images.includes(url) && "scale-95 ring-2 ring-black/50 "
+      )}
+    >
       <div className="border aspect-square ">
         <Image src={url} height={400} width={400} alt="site-image" />
       </div>

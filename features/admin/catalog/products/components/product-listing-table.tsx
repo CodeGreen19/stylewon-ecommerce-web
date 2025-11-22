@@ -28,6 +28,10 @@ export default function ProductListingTable({
         header: "Price",
       },
       {
+        accessorKey: "quantity",
+        header: "Quantity",
+      },
+      {
         id: "actions",
         cell: () => (
           <DataTableActionDropdown

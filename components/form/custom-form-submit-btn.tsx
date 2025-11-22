@@ -19,7 +19,12 @@ export default function CustomFormSubmitBtn({
         side && side === "left" ? "justify-start" : ""
       )}
     >
-      <Button className="rounded-full px-6" disabled={isPending} {...props}>
+      <Button
+        type="submit"
+        className="rounded-full px-6"
+        disabled={isPending}
+        {...props}
+      >
         <LoadingSwap isLoading={isPending ?? false}>{children}</LoadingSwap>
       </Button>
     </div>

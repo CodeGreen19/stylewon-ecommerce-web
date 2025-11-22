@@ -2,6 +2,7 @@
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -19,30 +20,53 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { ChevronsUpDown, File } from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Progress } from "../ui/progress";
 import ImageDetailsSection from "./image-detail-section";
 import SiteFilesSection from "./site-files-section";
 import TrashImage from "./trash-image";
 import UploadButton from "./upload-button";
+import { useAddImage } from "./hooks/use-add-image";
+import { Button } from "../ui/button";
 
 const tabs = ["Site Files", "Trash"] as const;
 
 export function ManageImageWrapper({
   children,
+  onSetImages,
 }: {
   children: React.ReactNode;
+  onSetImages: (images: string[]) => void;
 }) {
   const isMobile = useIsMobile(1024);
+  const { images, clearImages } = useAddImage();
   const [activeTab, setActiveTab] =
     useState<(typeof tabs)[number]>("Site Files");
+
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className=" min-w-[98vw] h-[95vh] lg:min-w-[85vw] lg:h-[85vh] p-0 flex flex-col">
-        <DialogHeader className="p-4 md:px-6 pt-6">
-          <DialogTitle className="text-start">Asset Management</DialogTitle>
+        <DialogHeader className="p-4 md:px-6 pt-6 relative">
+          <DialogTitle className="text-start">
+            <span>Asset Management</span>
+            {images.length !== 0 && (
+              <div className="p-4 absolute top-3 right-4 lg:right-8 ">
+                <Button
+                  onClick={() => {
+                    onSetImages(images);
+                    closeRef.current?.click();
+                    clearImages();
+                  }}
+                  className="rounded-full "
+                >
+                  Add to page ({images.length})
+                </Button>
+              </div>
+            )}
+          </DialogTitle>
           <DialogDescription className="text-start">
             Upload, crop, structure your assets here.
           </DialogDescription>
@@ -61,7 +85,7 @@ export function ManageImageWrapper({
                 setActiveTab={setActiveTab}
               />
             </section>
-            <section className="border-r overflow-y-auto">
+            <section className="border-r overflow-y-auto relative">
               {activeTab === "Site Files" ? (
                 <SiteFilesSection />
               ) : activeTab === "Trash" ? (
@@ -74,6 +98,7 @@ export function ManageImageWrapper({
           </div>
         </div>
       </DialogContent>
+      <DialogClose ref={closeRef} />
     </Dialog>
   );
 }

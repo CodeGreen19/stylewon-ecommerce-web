@@ -9,11 +9,13 @@ export const addProductSchema = z.object({
   // slug: z.string().min(1).max(255),
   description: z.string().nullable(),
   price: z.string().min(1, "Price must be a number"),
+  quantity: z.string().min(1, "Quantitiy is required"),
   // stock: z.number().min(0),
   // sku: z.string().max(100).nullable(),
   // images: z.array(z.url()),
   // categories: z.array(z.string()),
   // status: z.enum(STATUS_ENUM),
+  images: z.array(z.string()),
 });
 
 export type AddProductType = z.infer<typeof addProductSchema>;
