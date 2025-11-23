@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export type CartItem = {
-  id: string;
+  productId: string;
   name: string;
   price: number;
   image?: string;
@@ -11,8 +11,8 @@ export type CartItem = {
 type Store = {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
-  removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, qty: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, qty: number) => void;
   clearCart: () => void;
 };
 
@@ -42,12 +42,14 @@ export const useCartItems = create<Store>((set, get) => ({
     const cart = get().cart;
 
     // Check if item already exists → merge quantity
-    const existing = cart.find((i) => i.id === item.id);
+    const existing = cart.find((i) => i.productId === item.productId);
 
     let updatedCart;
     if (existing) {
       updatedCart = cart.map((i) =>
-        i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
+        i.productId === item.productId
+          ? { ...i, quantity: i.quantity + item.quantity }
+          : i
       );
     } else {
       updatedCart = [...cart, item];
@@ -56,14 +58,14 @@ export const useCartItems = create<Store>((set, get) => ({
     set({ cart: updatedCart });
     saveCart(updatedCart);
   },
-  removeFromCart: (id) => {
-    const updated = get().cart.filter((item) => item.id !== id);
+  removeFromCart: (productId) => {
+    const updated = get().cart.filter((item) => item.productId !== productId);
     set({ cart: updated });
     saveCart(updated);
   },
-  updateQuantity: (id, qty) => {
+  updateQuantity: (productId, qty) => {
     const updated = get().cart.map((item) =>
-      item.id === id ? { ...item, quantity: qty } : item
+      item.productId === productId ? { ...item, quantity: qty } : item
     );
     set({ cart: updated });
     saveCart(updated);

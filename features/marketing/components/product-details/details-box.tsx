@@ -72,8 +72,10 @@ export default function DetailsPage({
             onClick={() => {
               addToCart({
                 ...product,
+                productId: product.id,
                 quantity: 1,
                 price: Number(product.price),
+                image: product.images[0],
               });
               toast.success("Added to cart.");
             }}

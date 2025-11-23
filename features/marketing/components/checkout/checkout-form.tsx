@@ -4,27 +4,26 @@ import CustomFormField from "@/components/form/custom-form-field";
 import CustomFormSubmitBtn from "@/components/form/custom-form-submit-btn";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { getBillingsInfo, updateBillingsInfo } from "../../actions";
+import { getBillingsInfo, placeOrder, updateBillingsInfo } from "../../actions";
 import { useCartItems } from "../../hooks/use-cart-items";
 import {
   billingSchema,
   BillingSchemaShape,
   BillingSchemaType,
 } from "../../schemas";
+import { useRouter } from "next/navigation";
 
 export default function CheckoutForm({
   promise,
 }: {
   promise: ReturnType<typeof getBillingsInfo>;
 }) {
+  const router = useRouter();
   const [total, setTotal] = useState<number>(0);
   const billings = use(promise);
-  const router = useRouter();
-  const { cart } = useCartItems();
+  const { cart, clearCart } = useCartItems();
   const form = useForm<BillingSchemaType>({
     resolver: zodResolver(billingSchema),
     defaultValues: {
@@ -36,8 +35,9 @@ export default function CheckoutForm({
   const isPending = form.formState.isSubmitting;
   const onSubmit = async (inputs: BillingSchemaType) => {
     await updateBillingsInfo(inputs);
-    router.refresh();
-    toast.success("Billings info updated");
+    await placeOrder({ cart });
+    clearCart();
+    router.push("/account/orders");
   };
   useEffect(() => {
     if (typeof window !== "undefined") {

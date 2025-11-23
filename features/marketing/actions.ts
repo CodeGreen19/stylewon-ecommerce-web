@@ -7,6 +7,8 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { BillingSchemaType } from "./schemas";
+import { CartItem } from "./hooks/use-cart-items";
+import { orderItems, orders } from "@/drizzle/schema";
 
 export async function getBillingsInfo() {
   const account = await auth.api.getSession({ headers: await headers() });
@@ -44,4 +46,36 @@ export async function updateBillingsInfo(inputs: BillingSchemaType) {
     .where(eq(billingInfo.userId, account.user.id));
 
   return billings;
+}
+
+type PlaceOrderType = {
+  cart: CartItem[];
+};
+export async function placeOrder({ cart }: PlaceOrderType) {
+  const account = await auth.api.getSession({ headers: await headers() });
+  if (!account) {
+    redirect("/");
+  }
+  const totalAmount = cart.reduce(
+    (prev, current) => prev + current.price * current.quantity,
+    0
+  );
+  const [newOrder] = await db
+    .insert(orders)
+    .values({
+      totalAmount: JSON.stringify(totalAmount),
+      userId: account.user.id,
+    })
+    .returning();
+
+  cart.forEach(async (c) => {
+    await db.insert(orderItems).values({
+      name: c.name,
+      orderId: newOrder.id,
+      price: JSON.stringify(c.price),
+      productId: c.productId,
+      quantity: c.quantity,
+      image: c.image,
+    });
+  });
 }
