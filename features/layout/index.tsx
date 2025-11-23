@@ -31,6 +31,15 @@ type BreadcrumbConfig = {
 
 const breadcrumbConfig: BreadcrumbConfig[] = [
   {
+    pathname: "/admin/home/overviews",
+    links: [
+      {
+        title: "Overviews",
+        url: "/admin/home/overviews",
+      },
+    ],
+  },
+  {
     pathname: "/admin/catalog/products",
     links: [
       {
@@ -61,6 +70,15 @@ const breadcrumbConfig: BreadcrumbConfig[] = [
       },
     ],
   },
+  {
+    pathname: "/admin/sales/orders",
+    links: [
+      {
+        title: "Orders",
+        url: "/admin/sales/orders",
+      },
+    ],
+  },
 ];
 
 export default function AdminLayout(props: LayoutProps<"/admin">) {
@@ -69,10 +87,12 @@ export default function AdminLayout(props: LayoutProps<"/admin">) {
   const getBreadcrumbs = (path: string): CrumbLink[] => {
     let crumbLinks: CrumbLink[] = [];
 
-    if (pathname.includes("catalog")) {
+    if (pathname.includes("/catalog/")) {
       crumbLinks.push({ title: "Catalog" });
-    } else if (pathname.includes("")) {
-      //todo:
+    } else if (pathname.includes("/home/")) {
+      crumbLinks.push({ title: "Home" });
+    } else if (pathname.includes("/sales/")) {
+      crumbLinks.push({ title: "Sales" });
     }
     const findLinks =
       breadcrumbConfig.find((item) => item.pathname === path)?.links ?? [];

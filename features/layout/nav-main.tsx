@@ -33,7 +33,7 @@ export function NavMain({ navItems }: { navItems: NavMainType[] }) {
     }
   };
   return navItems.map((item) => (
-    <SidebarGroup key={item.title}>
+    <SidebarGroup key={item.title} className="py-0">
       <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
       <SidebarMenu>
         {item.lists.map((list) => (

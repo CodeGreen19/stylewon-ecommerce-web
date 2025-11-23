@@ -1,26 +1,16 @@
 "use client";
 
-import * as React from "react";
 import {
-  BookOpen,
-  Bot,
+  Album,
   Cat,
-  Command,
-  Frame,
   Inbox,
   LifeBuoy,
   List,
-  Map,
-  PieChart,
   Send,
-  Settings2,
   SquareDashedBottomCode,
-  SquareTerminal,
 } from "lucide-react";
+import * as React from "react";
 
-import { NavMain, NavMainType } from "@/features/layout/nav-main";
-import { NavSecondary } from "@/features/layout/nav-secondary";
-import { NavUser } from "@/features/layout/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -30,6 +20,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { NavMain, NavMainType } from "@/features/layout/nav-main";
+import { NavUser } from "@/features/layout/nav-user";
 
 const data = {
   user: {
@@ -54,6 +46,16 @@ const data = {
 
 const navItems: NavMainType[] = [
   {
+    title: "Home",
+    lists: [
+      {
+        title: "Overviews",
+        icon: Album,
+        url: "/admin/home/overviews",
+      },
+    ],
+  },
+  {
     title: "Catalog",
     lists: [
       {
@@ -70,6 +72,16 @@ const navItems: NavMainType[] = [
         title: "Categories",
         icon: Cat,
         url: "/admin/catalog/categories",
+      },
+    ],
+  },
+  {
+    title: "Sales",
+    lists: [
+      {
+        title: "Orders",
+        icon: List,
+        url: "/admin/sales/orders",
       },
     ],
   },
@@ -101,7 +113,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain navItems={navItems} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
