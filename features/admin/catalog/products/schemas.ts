@@ -1,22 +1,46 @@
 // schemas/product.ts
-import { products } from "@/drizzle/schema";
 import { z } from "zod";
 
-const STATUS_ENUM = ["draft", "published", "archived"];
-
 export const addProductSchema = z.object({
-  name: z.string().min(5, "Name must be at least 5 char.").max(255),
-  // slug: z.string().min(1).max(255),
-  description: z.string().nullable(),
-  price: z.string().min(1, "Price must be a number"),
-  quantity: z.string().min(1, "Quantitiy is required"),
-  // stock: z.number().min(0),
-  // sku: z.string().max(100).nullable(),
-  // images: z.array(z.url()),
-  // categories: z.array(z.string()),
-  // status: z.enum(STATUS_ENUM),
+  name: z
+    .string()
+    .min(5, "Product name must be at least 5 characters.")
+    .max(255, "Product name must be at most 255 characters."),
+
+  description: z.string().min(1, "Description is required."),
+
+  price: z
+    .string()
+    .min(2, "Price must exceed 10 units.")
+    .max(100000, "Price cannot exceed 100000 units."),
+
+  costOfGoods: z.string().optional(),
+
+  profit: z.string(),
+
+  margin: z.string(),
+
   images: z.array(z.string()),
+  sizes: z.array(
+    z.object({
+      label: z.string(),
+      value: z.string(),
+    })
+  ),
+  colors: z.array(
+    z.object({
+      label: z.string(),
+      value: z.string(),
+      hexColor: z.string().optional(),
+    })
+  ),
+
+  stocks: z
+    .string()
+    .min(1, "Stock quantity is required.")
+    .max(10000, "Stock cannot exceed 10000 units."),
+
+  shippingWeight: z.string(),
 });
 
-export type AddProductType = z.infer<typeof addProductSchema>;
-export type AddProductShape = typeof addProductSchema.shape;
+export type AddProductSchemaType = z.infer<typeof addProductSchema>;

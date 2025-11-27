@@ -5,13 +5,13 @@ import { Edit, Notebook, Trash } from "lucide-react";
 import { Fragment, use } from "react";
 import DataTableActionDropdown from "@/components/table/data-table-action-dropdown";
 import { getProducts } from "../queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-export default function ProductListingTable({
-  promise,
-}: {
-  promise: ReturnType<typeof getProducts>;
-}) {
-  const allCourses = use(promise);
+export default function ProductListingTable() {
+  const { data: allCourses } = useSuspenseQuery({
+    queryKey: ["products"],
+    queryFn: () => getProducts(),
+  });
 
   const columns: ColumnDef<Awaited<ReturnType<typeof getProducts>>[number]>[] =
     [
@@ -20,16 +20,16 @@ export default function ProductListingTable({
         header: "Name",
       },
       {
-        accessorKey: "description",
-        header: "Descriptions",
+        accessorKey: "costOfGoods",
+        header: "Costs of good",
       },
       {
         accessorKey: "price",
         header: "Price",
       },
       {
-        accessorKey: "quantity",
-        header: "Quantity",
+        accessorKey: "stocks",
+        header: "Stocks",
       },
       {
         id: "actions",

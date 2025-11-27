@@ -120,3 +120,38 @@
     @apply bg-background text-foreground;
   }
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none;
+  margin: 0;
+}
+/* editor.css */
+
+.editor-content {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 16px;
+  background: white;
+  min-height: 200px;
+}
+
+/* Remove ProseMirror’s default focus border */
+.editor-content .ProseMirror:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ProseMirror ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem;
+}
+.ProseMirror a {
+  color: blue !important;
+  cursor: pointer;
+}

@@ -1,9 +1,17 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Logo() {
   return (
-    <Link href={"/"}>
-      <div className="text-xl font-semibold">Logo</div>
+    <Link href="/">
+      {/* <Image
+        src="/logo.png"
+        className="drop-shadow-xs drop-shadow-black/60 h-16 w-auto"
+        height={150}
+        width={150}
+        alt="Logo"
+      /> */}
+      <h1 className="text-2xl font-semibold">Logo here</h1>
     </Link>
   );
 }

@@ -1,19 +1,30 @@
-import React, { Suspense } from "react";
-import { getProducts } from "../queries";
-import ProductHeading from "../components/product-heading";
+"use cache";
+import { getQueryClient } from "@/tanstack-query/get-query-client";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import ProductHeading from "../components/product-heading";
 import ProductListingTable from "../components/product-listing-table";
+import { getProducts } from "../queries";
+import Loading from "@/components/shared/loading";
+import Error from "@/components/shared/error";
 
-export default function ProductsPage() {
-  const promise = getProducts();
+export default async function ProductsPage() {
+  const qc = getQueryClient();
+  void qc.prefetchQuery({
+    queryKey: ["products"],
+    queryFn: () => getProducts(),
+  });
   return (
     <div>
       <ProductHeading />
-      <ErrorBoundary fallback={<div>Error</div>}>
-        <Suspense fallback={<div>loading...</div>}>
-          <ProductListingTable promise={promise} />
-        </Suspense>
-      </ErrorBoundary>
+      <HydrationBoundary state={dehydrate(qc)}>
+        <ErrorBoundary fallback={<Error />}>
+          <Suspense fallback={<Loading />}>
+            <ProductListingTable />
+          </Suspense>
+        </ErrorBoundary>
+      </HydrationBoundary>
     </div>
   );
 }

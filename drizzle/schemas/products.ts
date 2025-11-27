@@ -1,33 +1,60 @@
 // drizzle/schema/products.ts
-import { relations, sql } from "drizzle-orm";
-import {
-  integer,
-  json,
-  numeric,
-  pgTable,
-  text,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { createdAt, updatedAt } from "../helpers";
-import { asserts } from "./asserts";
+import { integer, numeric, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { createdAt, id, updatedAt } from "../helpers";
+import { relations } from "drizzle-orm";
 
 export const products = pgTable("products", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  // slug: varchar("slug", { length: 255 }).notNull().unique(),
-  description: text("description"),
-  quantity: numeric("quantity").notNull().default("0"),
-  price: numeric("price", { precision: 12, scale: 2 })
-    .notNull()
-    .default("0.00"),
-  // stock: integer("stock").notNull().default(0),
-  // sku: varchar("sku", { length: 100 }),
+  id,
 
-  // // store images and small meta as jsonb for flexibility (array of urls, or objects later)
-  // images: json("images").default(sql`'[]'::jsonb`),
-  // status: varchar("status", { length: 20 }).notNull(), // e.g. draft | published | archived
-  images: text("images").array().notNull().default([]),
+  name: text("name").notNull(), // 5–255 chars (handled by Zod)
+  description: text("description").notNull(),
+
+  price: numeric("price").notNull(), // stored as numeric
+  costOfGoods: numeric("cost_of_goods"), // optional
+  profit: numeric("profit").notNull(),
+  margin: numeric("margin").notNull(),
+
+  images: text("images").array().notNull(), // text[]
+
+  stocks: integer("stocks").notNull(), // max 10000
+  shippingWeight: numeric("shipping_weight").notNull(),
   createdAt,
   updatedAt,
 });
+
+export const productRelations = relations(products, ({ many }) => ({
+  sizes: many(productSizes),
+  colors: many(productColors),
+}));
+
+export const productSizes = pgTable("product_sizes", {
+  id,
+  productId: uuid("product_id")
+    .notNull()
+    .references(() => products.id, { onDelete: "cascade" }),
+  label: text("label").notNull(),
+  value: text("value").notNull(),
+});
+export const productSizesRelations = relations(productSizes, ({ one }) => ({
+  product: one(products, {
+    fields: [productSizes.productId],
+    references: [products.id],
+  }),
+}));
+
+export const productColors = pgTable("product_colors", {
+  id,
+  productId: uuid("product_id")
+    .notNull()
+    .references(() => products.id, { onDelete: "cascade" }),
+  label: text("label").notNull(),
+  value: text("value").notNull(),
+  hexColor: text("hex_color"), // optional in Zod
+});
+
+export const productColorsRelations = relations(productColors, ({ one }) => ({
+  product: one(products, {
+    fields: [productColors.productId],
+    references: [products.id],
+  }),
+}));

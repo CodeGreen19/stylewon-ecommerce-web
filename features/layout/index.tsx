@@ -105,8 +105,8 @@ export default function AdminLayout(props: LayoutProps<"/admin">) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2">
+      <SidebarInset className="overflow-x-auto h-[97dvh]">
+        <header className="flex h-16 border-b border-dotted shrink-0 bg-background/60 backdrop-blur-sm sticky top-0 right-0 items-center gap-2">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator

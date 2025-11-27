@@ -33,15 +33,15 @@ export function NavMain({ navItems }: { navItems: NavMainType[] }) {
     }
   };
   return navItems.map((item) => (
-    <SidebarGroup key={item.title} className="py-0">
+    <SidebarGroup key={item.title} className="py-0 ">
       <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-      <SidebarMenu>
+      <SidebarMenu className="">
         {item.lists.map((list) => (
           <SidebarMenuItem key={list.url}>
             <Link href={list.url}>
               <SidebarMenuButton
                 className={cn(
-                  "py-5 px-4 rounded-full ",
+                  "py-5 px-2 rounded-full ",
                   selectedRoute(list.url) &&
                     "bg-primary text-white hover:bg-primary active:text-white active:bg-primary hover:text-white"
                 )}
