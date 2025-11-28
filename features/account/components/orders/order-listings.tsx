@@ -1,16 +1,15 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { use } from "react";
 import { getOrders } from "../../actions";
 
-export default function OrderListings({
-  promise,
-}: {
-  promise: ReturnType<typeof getOrders>;
-}) {
-  const info = use(promise);
+export default function OrderListings() {
+  const { data: info } = useSuspenseQuery({
+    queryKey: ["user-orders"],
+    queryFn: () => getOrders(),
+  });
   return (
     <div className="w-full space-y-6">
       {info.length === 0 ? (
@@ -19,9 +18,9 @@ export default function OrderListings({
         info.map((order) => (
           <Card
             key={order.id}
-            className="rounded-2xl shadow-sm border p-4 hover:shadow-md transition"
+            className="rounded-2xl shadow-sm bg-cyan-600 border p-4 hover:shadow-md transition"
           >
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 ">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                 <div>
                   <h2 className="text-lg font-semibold">

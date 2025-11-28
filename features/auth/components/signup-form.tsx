@@ -1,21 +1,26 @@
 "use client";
 
-import CustomFormField from "@/components/form/custom-form-field";
-import CustomFormSubmitBtn from "@/components/form/custom-form-submit-btn";
-import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { LoadingSwap } from "@/components/ui/loading-swap";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { signupSchema, SignupSchemaShape, SignupSchemaType } from "../schemas";
+import { signupSchema, SignupSchemaType } from "../schemas";
 
-export default function SignupForm({
+export default function SigninForm({
   closeDialog,
 }: {
   closeDialog: () => void;
 }) {
-  const router = useRouter();
   const form = useForm<SignupSchemaType>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -25,45 +30,61 @@ export default function SignupForm({
     },
   });
 
-  const isPending = form.formState.isSubmitting;
-
-  const onSubmit = async (inputs: SignupSchemaType) => {
-    const res = await authClient.signUp.email(inputs);
-    if (res.data) {
-      toast.success("Signed up successfully");
-      closeDialog();
-    }
-    if (res.error) {
-      toast.error(res.error.message || res.error.statusText);
-    }
-  };
+  const { isPending, mutate } = useMutation({
+    mutationFn: async (input: SignupSchemaType) => {
+      const res = await authClient.signUp.email(input);
+      if (res.data) {
+        toast.success("Signup success");
+        closeDialog();
+      }
+      if (res.error) {
+        toast.error(res.error.message || res.error.statusText);
+      }
+    },
+  });
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <CustomFormField<SignupSchemaShape>
-          form={form}
-          input="text"
+    <form onSubmit={form.handleSubmit((v) => mutate(v))}>
+      <FieldGroup className="gap-4">
+        <Controller
           name="name"
-          title="Full name"
-          required
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Full name</FieldLabel>
+              <Input aria-invalid={fieldState.invalid} {...field} />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-        <CustomFormField<SignupSchemaShape>
-          form={form}
-          input="email"
+        <Controller
           name="email"
-          title="Email address"
-          required
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Email address</FieldLabel>
+              <Input aria-invalid={fieldState.invalid} {...field} />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-        <CustomFormField<SignupSchemaShape>
-          form={form}
-          input="text"
+        <Controller
           name="password"
-          title="Password"
-          required
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Password</FieldLabel>
+              <Input aria-invalid={fieldState.invalid} {...field} />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-        <CustomFormSubmitBtn isPending={isPending}>Submit</CustomFormSubmitBtn>
-      </form>
-    </Form>
+        <Field orientation={"horizontal"} className="justify-end">
+          <Button className="rounded-full" disabled={isPending}>
+            <LoadingSwap isLoading={isPending}>Submit</LoadingSwap>
+          </Button>
+        </Field>
+      </FieldGroup>
+    </form>
   );
 }

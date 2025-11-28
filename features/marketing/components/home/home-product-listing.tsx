@@ -11,8 +11,8 @@ export default function HomeProductListing({
   promise: ReturnType<typeof getProducts>;
 }) {
   return (
-    <div className="my-10 max-w-5xl m-auto px-4 xl:px-0">
-      <Heading>Products</Heading>
+    <div className="my-10 max-w-5xl m-auto px-2 xl:px-0">
+      <Heading>Trending</Heading>
       <Suspense fallback={<div>Fetching...</div>}>
         <Products promise={promise} />
       </Suspense>
@@ -23,7 +23,7 @@ export default function HomeProductListing({
 function Products({ promise }: { promise: ReturnType<typeof getProducts> }) {
   const products = use(promise);
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 ">
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:gap-4 gap-1 ">
       {products.map((p) => (
         <ProductCard
           key={p.id}

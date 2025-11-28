@@ -36,14 +36,14 @@ export default function CartToPaymentWrapper({
         <span className="relative">
           {children}
 
-          <span className="absolute -top-3 right-1 font-sans text-sm">
-            {cartCount}
-          </span>
+          {cartCount !== 0 && (
+            <span className="inline-block animate-pulse absolute top-0 right-0 animation-duration-[3000] size-2 rounded-full bg-white "></span>
+          )}
         </span>
       </SheetTrigger>
-      <SheetContent className="sm:max-w-lg">
+      <SheetContent className="sm:max-w-lg border-cyan-950 noise-bg">
         <SheetHeader>
-          <SheetTitle className="text-2xl">Cart to payment here.</SheetTitle>
+          <SheetTitle className="text-2xl">Shopping Carts</SheetTitle>
         </SheetHeader>
         <div className="px-4">
           <CartItems />

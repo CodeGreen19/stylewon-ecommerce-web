@@ -10,7 +10,7 @@ export default function CartItems() {
 
   if (cart.length === 0)
     return (
-      <div className="flex justify-center items-center space-x-2 rounded-md py-20 border text-neutral-500">
+      <div className="flex justify-center items-center space-x-2 rounded-md py-20 border border-cyan-600 border-dashed">
         <span>Your cart is empty</span> <Ban />
       </div>
     );

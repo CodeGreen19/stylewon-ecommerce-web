@@ -9,7 +9,6 @@ export const signupSchema = z.object({
 });
 
 export type SignupSchemaType = z.infer<typeof signupSchema>;
-export type SignupSchemaShape = typeof signupSchema.shape;
 
 export const signinSchema = z.object({
   email: z
@@ -19,4 +18,3 @@ export const signinSchema = z.object({
 });
 
 export type SigninSchemaType = z.infer<typeof signinSchema>;
-export type SigninSchemaShape = typeof signinSchema.shape;

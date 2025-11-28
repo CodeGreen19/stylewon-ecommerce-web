@@ -20,17 +20,27 @@ export default function AuthWrapper({ children }: { children: ReactNode }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-sm noise-bg  bg-cyan-700 border border-cyan-800">
         <DialogHeader>
           <DialogTitle></DialogTitle>
         </DialogHeader>
-        <div className="flex w-full  flex-col gap-6">
+        <div className="flex w-full flex-col gap-6">
           <Tabs defaultValue="account">
-            <TabsList>
-              <TabsTrigger value="signin">Login</TabsTrigger>
-              <TabsTrigger value="signup">Register</TabsTrigger>
+            <TabsList className="rounded-full grid grid-cols-2">
+              <TabsTrigger
+                className="rounded-full data-[state=active]:bg-cyan-600"
+                value="signin"
+              >
+                Login
+              </TabsTrigger>
+              <TabsTrigger
+                className="rounded-full data-[state=active]:bg-cyan-600"
+                value="signup"
+              >
+                Register
+              </TabsTrigger>
             </TabsList>
-            <TabsContent className="p-2 py-5" value="signin">
+            <TabsContent className="p-2 py-5 " value="signin">
               <SigninForm closeDialog={closeDialog} />
             </TabsContent>
             <TabsContent className="p-2 py-5" value="signup">

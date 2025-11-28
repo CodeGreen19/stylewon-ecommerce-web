@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/drizzle/db";
-import { orderItems, orders } from "@/drizzle/schema";
+import { orders } from "@/drizzle/schema";
 import { auth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";

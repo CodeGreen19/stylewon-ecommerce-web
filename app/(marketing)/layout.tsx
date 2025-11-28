@@ -1,6 +1,9 @@
 import MarketingLayout from "@/features/marketing/layout";
-import React from "react";
 
 export default function layout(props: LayoutProps<"/">) {
-  return <MarketingLayout {...props} />;
+  return (
+    <div className="marketing-bg">
+      <MarketingLayout {...props} />;
+    </div>
+  );
 }

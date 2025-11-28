@@ -25,7 +25,7 @@ export default function UserDetails() {
   const user = data.user;
 
   return (
-    <section className="max-w-md  p-6 border rounded-xl space-y-6">
+    <section className="w-full bg-cyan-700  p-6 border rounded-xl space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
         <div className="h-16 w-16 rounded-full border overflow-hidden bg-muted">
@@ -40,7 +40,7 @@ export default function UserDetails() {
 
         <div>
           <h1 className="text-xl font-semibold">{user.name}</h1>
-          <p className="text-sm text-muted-foreground">{user.email}</p>
+          <p className="text-sm text-foreground">{user.email}</p>
         </div>
       </div>
 
@@ -61,7 +61,7 @@ export default function UserDetails() {
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between text-sm">
-      <span className="font-medium text-muted-foreground">{label}</span>
+      <span className="font-medium text-foreground">{label}</span>
       <span className="font-semibold">{value}</span>
     </div>
   );

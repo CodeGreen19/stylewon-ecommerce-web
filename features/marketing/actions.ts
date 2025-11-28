@@ -8,7 +8,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { BillingSchemaType } from "./schemas";
 import { CartItem } from "./hooks/use-cart-items";
-import { orderItems, orders } from "@/drizzle/schema";
+import { orderItems, orders, products } from "@/drizzle/schema";
 
 export async function getBillingsInfo() {
   const account = await auth.api.getSession({ headers: await headers() });
@@ -78,4 +78,8 @@ export async function placeOrder({ cart }: PlaceOrderType) {
       image: c.image,
     });
   });
+}
+
+export async function relatedProducts() {
+  return await db.select().from(products).limit(9);
 }

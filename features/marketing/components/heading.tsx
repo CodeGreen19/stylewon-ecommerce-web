@@ -11,7 +11,7 @@ export default function Heading({
   return (
     <div
       className={cn(
-        "text-xl md:text-2xl mb-6 font-semibold text-center",
+        "text-xl md:text-2xl border-b border-cyan-600 border-dashed mb-6  font-semibold p-2 mt-4 text-center",
         className
       )}
     >

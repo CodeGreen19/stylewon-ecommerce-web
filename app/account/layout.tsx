@@ -4,8 +4,10 @@ import React from "react";
 
 export default function layout(props: LayoutProps<"/">) {
   return (
-    <MarketingLayout {...props}>
-      <AccountLayout {...props} />
-    </MarketingLayout>
+    <div className="marketing-bg">
+      <MarketingLayout {...props}>
+        <AccountLayout {...props} />
+      </MarketingLayout>
+    </div>
   );
 }

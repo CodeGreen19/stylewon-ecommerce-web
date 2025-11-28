@@ -11,7 +11,7 @@ export async function addProduct(info: AddProductSchemaType) {
     .returning();
   const editedSizes = info.sizes.map((s) => ({ ...s, productId: res.id }));
   await db.insert(productSizes).values(editedSizes);
-  const editedColors = info.sizes.map((s) => ({ ...s, productId: res.id }));
+  const editedColors = info.colors.map((s) => ({ ...s, productId: res.id }));
   await db.insert(productColors).values(editedColors);
   return { message: "New product added" };
 }
