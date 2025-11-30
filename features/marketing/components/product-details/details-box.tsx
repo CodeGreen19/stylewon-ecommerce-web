@@ -1,28 +1,44 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { toast } from "sonner";
-import { useCartItems } from "../../hooks/use-cart-items";
-import { productDetails } from "../../queries";
-import { useState } from "react";
 import {
   Field,
   FieldContent,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
+import { Minus, Plus } from "lucide-react";
+import Image from "next/image";
+import { Fragment, useEffect } from "react";
+import { toast } from "sonner";
+import { addToCart } from "../../actions";
+import { useCartItems } from "../../hooks/use-cart-items";
+import { productDetails } from "../../queries";
+import { CartType } from "../../types";
 import AdditionalInfo from "./additional-info";
+import { getQueryClient } from "@/tanstack-query/get-query-client";
 
-export default function DetailsBox({
-  product,
-}: {
-  product: Awaited<ReturnType<typeof productDetails>>;
-}) {
-  const [selectedImage, setSelectedImage] = useState(product.images[0] ?? "");
+type Product = Awaited<ReturnType<typeof productDetails>>;
+export default function DetailsBox({ product }: { product: Product }) {
+  const {
+    selectedImage,
+    selectedColor,
+    selectedSize,
+    setSelectedColor,
+    setSelectedImage,
+    setSelectedSize,
+    setQuantity,
+  } = useCartItems();
   const item = product; // since productDetails returns an array
-  const { addToCart } = useCartItems();
+  useEffect(() => {
+    setSelectedImage(product.images[0]);
+    return () => {
+      setSelectedColor(""), setSelectedSize(""), setQuantity(1);
+    };
+  }, []);
 
   if (!item) return <div>No product found.</div>;
 
@@ -34,7 +50,7 @@ export default function DetailsBox({
           {/* Main image */}
           <div className="aspect-square w-full rounded-xl border-cyan-600 border overflow-hidden bg-muted">
             <Image
-              src={selectedImage}
+              src={selectedImage || product.images[0]}
               alt={item.name}
               width={600}
               height={600}
@@ -73,8 +89,11 @@ export default function DetailsBox({
               <FieldContent className="flex-row flex-wrap">
                 {item.sizes.map((size) => (
                   <Button
+                    onClick={() => setSelectedSize(size.label)}
                     className="flex-none"
-                    variant={"outline"}
+                    variant={
+                      selectedSize === size.label ? "default" : "outline"
+                    }
                     key={size.id}
                   >
                     {size.label}
@@ -87,7 +106,10 @@ export default function DetailsBox({
               <FieldContent className="flex-row flex-wrap">
                 {item.colors.map((color) => (
                   <Button
-                    variant={"outline"}
+                    onClick={() => setSelectedColor(color.label)}
+                    variant={
+                      selectedColor === color.label ? "default" : "outline"
+                    }
                     className="flex-none"
                     key={color.id}
                   >
@@ -102,26 +124,80 @@ export default function DetailsBox({
             </Field>
           </FieldGroup>
 
-          <div className="text-3xl font-bold">{Number(item.price)} Taka</div>
-
-          <Button
-            onClick={() => {
-              addToCart({
-                ...product,
-                productId: product.id,
-                quantity: 1,
-                price: Number(product.price),
-                image: product.images[0],
-              });
-              toast.success("Added to cart.");
-            }}
-            className="w-full rounded-full py-6"
-          >
-            Add to Cart
-          </Button>
+          <QuantityAndAddtoCartBtn product={product} />
         </div>
       </div>
       <AdditionalInfo des={product.description} />
     </section>
+  );
+}
+
+function QuantityAndAddtoCartBtn({ product }: { product: Product }) {
+  const { isPending, data } = authClient.useSession();
+  const qc = getQueryClient();
+  const {
+    guestUserAddToCart,
+    quantity,
+    setQuantity,
+    selectedColor,
+    selectedImage,
+    selectedSize,
+  } = useCartItems();
+
+  const m_AddToCart = useMutation({
+    mutationFn: addToCart,
+    onSuccess: async () => {
+      toast.success("Added to cart.");
+      await qc.invalidateQueries({ queryKey: ["login-user-carts"] });
+    },
+  });
+  return (
+    <Fragment>
+      <div className="flex gap-4 items-center">
+        <div className="flex items-center gap-1">
+          <Button onClick={() => quantity > 1 && setQuantity(quantity - 1)}>
+            <Minus />
+          </Button>
+          <Button>{quantity}</Button>
+          <Button onClick={() => setQuantity(quantity + 1)}>
+            <Plus />
+          </Button>
+        </div>
+        <div className="text-2xl text-cyan-200 font-bold">
+          {Number(product.price)} &#x09F3;
+        </div>
+      </div>
+
+      <Button
+        disabled={m_AddToCart.isPending}
+        onClick={() => {
+          if (isPending) {
+            return toast.info("Wait a while");
+          }
+
+          if (!selectedColor || !selectedSize) {
+            return toast.info("Color & Size selection is required");
+          }
+          const info: CartType = {
+            name: product.name,
+            price: Number(product.price),
+            productId: product.id,
+            quantity,
+            color: selectedColor,
+            imageUrl: selectedImage,
+            size: selectedSize,
+          };
+          if (data) {
+            m_AddToCart.mutate(info);
+          } else {
+            guestUserAddToCart(info);
+            toast.success("Added to cart.");
+          }
+        }}
+        className="w-full rounded-full py-6"
+      >
+        Add to Cart
+      </Button>
+    </Fragment>
   );
 }

@@ -16,7 +16,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { signupSchema, SignupSchemaType } from "../schemas";
 
-export default function SigninForm({
+export default function SignUpForm({
   closeDialog,
 }: {
   closeDialog: () => void;

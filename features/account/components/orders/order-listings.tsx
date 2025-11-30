@@ -24,7 +24,7 @@ export default function OrderListings() {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                 <div>
                   <h2 className="text-lg font-semibold">
-                    Order #{order.id.slice(0, 8)}
+                    Order ID : {order.id}
                   </h2>
                   <p className="text-sm text-muted-foreground">
                     Placed on {new Date(order.createdAt).toLocaleDateString()}
@@ -36,15 +36,15 @@ export default function OrderListings() {
               </div>
 
               <div className="grid gap-4">
-                {order.items.map((item) => (
+                {order.orderItems.map((item) => (
                   <div
                     key={item.id}
                     className="flex items-center justify-between gap-4 border rounded-xl p-3"
                   >
                     <div className="flex items-center gap-3">
-                      {item.image ? (
+                      {item.imageUrl ? (
                         <Image
-                          src={item.image}
+                          src={item.imageUrl}
                           alt={item.name}
                           width={50}
                           height={50}

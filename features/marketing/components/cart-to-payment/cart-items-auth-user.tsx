@@ -1,13 +1,30 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { getQueryClient } from "@/tanstack-query/get-query-client";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Ban, Minus, Plus } from "lucide-react";
-import { useCartItems } from "../../hooks/use-cart-items";
 import Image from "next/image";
+import { cartActions, getCartItems } from "../../actions";
 
-export default function CartItems() {
-  const { carts, guestUserUpdateQuantity, guestUserRemoveFromCart } =
-    useCartItems();
+export default function CartItemsAuthUsers() {
+  const qc = getQueryClient();
+  const {
+    isPending,
+    data: carts,
+    error,
+  } = useQuery({
+    queryKey: ["login-user-carts"],
+    queryFn: () => getCartItems(),
+  });
+  const { isPending: mutation_pending, mutate } = useMutation({
+    mutationFn: cartActions,
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ["login-user-carts"] });
+    },
+  });
+  if (isPending) return "Loading...";
+  if (error) return "Error";
 
   if (carts.length === 0)
     return (
@@ -45,29 +62,31 @@ export default function CartItems() {
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center my-2">
               <Button
+                disabled={mutation_pending}
                 variant={"outline"}
                 onClick={() =>
-                  guestUserUpdateQuantity(
-                    item.productId,
-                    item.quantity > 1 ? item.quantity - 1 : 1
-                  )
+                  mutate({ cartId: item.id, type: "DECREASE_QUANTITY" })
                 }
               >
                 <Minus />
               </Button>
               <Button variant={"outline"}>{item.quantity}</Button>
               <Button
+                disabled={mutation_pending}
                 variant={"outline"}
                 onClick={() =>
-                  guestUserUpdateQuantity(item.productId, item.quantity + 1)
+                  mutate({ cartId: item.id, type: "INCREASE_QUANTITY" })
                 }
               >
                 <Plus />
               </Button>
             </div>
             <Button
+              disabled={mutation_pending}
               variant={"outline"}
-              onClick={() => guestUserRemoveFromCart(item.productId)}
+              onClick={() =>
+                mutate({ cartId: item.id, type: "REMOVE_FROM_CART" })
+              }
               className="text-red-500 rounded-full text-sm"
             >
               remove

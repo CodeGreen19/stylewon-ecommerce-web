@@ -14,21 +14,36 @@ import CartItems from "./cart-items";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { loadCartFromLocalStorage } from "../../helpers";
+import { authClient } from "@/lib/auth-client";
+import CartItemsAuthUsers from "./cart-items-auth-user";
+import { getCartItems } from "../../actions";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 export default function CartToPaymentWrapper({
   children,
 }: {
   children: ReactNode;
 }) {
-  const { cart } = useCartItems();
-  const [cartCount, setCartCount] = useState<number>(0);
+  const { isPending, data: session } = authClient.useSession();
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+  //login carts
+  const { data: authCarts } = useQuery({
+    queryKey: ["login-user-carts"],
+    queryFn: () => getCartItems({ userId: session?.user.id }),
+    enabled: !!session,
+  });
+  const loggedinCarts = authCarts ?? [];
+
+  // localstorage carts
+  const { carts, setCarts } = useCartItems();
+
   useEffect(() => {
     if (window !== undefined) {
-      if (cart) {
-        setCartCount(cart.length);
-      }
+      setCarts(loadCartFromLocalStorage());
     }
-  }, [cart]);
+  }, []);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -36,7 +51,7 @@ export default function CartToPaymentWrapper({
         <span className="relative">
           {children}
 
-          {cartCount !== 0 && (
+          {(carts.length !== 0 || loggedinCarts.length !== 0) && (
             <span className="inline-block animate-pulse absolute top-0 right-0 animation-duration-[3000] size-2 rounded-full bg-white "></span>
           )}
         </span>
@@ -45,24 +60,45 @@ export default function CartToPaymentWrapper({
         <SheetHeader>
           <SheetTitle className="text-2xl">Shopping Carts</SheetTitle>
         </SheetHeader>
-        <div className="px-4">
-          <CartItems />
-        </div>
-        <SheetFooter className="flex flex-row items-center">
+        {isPending ? (
+          <div>Loading...</div>
+        ) : session ? (
+          <div className="px-4">
+            <CartItemsAuthUsers />
+          </div>
+        ) : (
+          <div className="px-4">
+            <CartItems />
+          </div>
+        )}
+        <SheetFooter className="flex flex-row items-center justify-between">
           <Button variant={"ghost"} className="py-6 rounded-full ">
-            Total :{" "}
-            {cart.reduce((prev, current) => {
-              return prev + current.price * current.quantity;
-            }, 0)}
+            Total :
+            {session
+              ? loggedinCarts.reduce((prev, current) => {
+                  return prev + current.price * current.quantity;
+                }, 0)
+              : carts.reduce((prev, current) => {
+                  return prev + current.price * current.quantity;
+                }, 0)}{" "}
+            &#x09F3;
           </Button>
-          <Link href={"/checkout"} className="flex-1">
-            <Button
-              onClick={() => setOpen(false)}
-              className="py-6  rounded-full w-full"
-            >
-              Proceed <ChevronRight />
-            </Button>
-          </Link>
+          <Button
+            onClick={() => {
+              if (isPending) {
+                return null;
+              }
+              setOpen(false);
+              if (session) {
+                router.push("/checkout");
+              } else {
+                router.push(`/auth/sign-in?success_redirect_to=/checkout`);
+              }
+            }}
+            className="py-6  rounded-full w-32"
+          >
+            Proceed <ChevronRight />
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

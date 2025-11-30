@@ -1,86 +1,124 @@
 "use client";
 
-import CustomFormField from "@/components/form/custom-form-field";
-import CustomFormSubmitBtn from "@/components/form/custom-form-submit-btn";
-import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Field,
+  FieldContent,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { LoadingSwap } from "@/components/ui/loading-swap";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { use, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
 import { getBillingsInfo, placeOrder, updateBillingsInfo } from "../../actions";
 import { useCartItems } from "../../hooks/use-cart-items";
-import {
-  billingSchema,
-  BillingSchemaShape,
-  BillingSchemaType,
-} from "../../schemas";
+import { billingSchema, BillingSchemaType } from "../../schemas";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export default function CheckoutForm({
-  promise,
-}: {
-  promise: ReturnType<typeof getBillingsInfo>;
-}) {
+export default function CheckoutForm() {
   const router = useRouter();
-  const [total, setTotal] = useState<number>(0);
-  const billings = use(promise);
-  const { cart, clearCart } = useCartItems();
+  const {
+    data: { totalAmount, billings },
+  } = useSuspenseQuery({
+    queryKey: ["billings"],
+    queryFn: () => getBillingsInfo(),
+  });
+  const { carts, setCarts } = useCartItems();
+
   const form = useForm<BillingSchemaType>({
     resolver: zodResolver(billingSchema),
     defaultValues: {
       fullName: billings ? billings.fullName : "",
-      address: billings ? billings.address : "",
+      address: billings ? billings.address ?? "" : "",
       phone: billings ? billings.phone : "",
     },
   });
-  const isPending = form.formState.isSubmitting;
-  const onSubmit = async (inputs: BillingSchemaType) => {
-    await updateBillingsInfo(inputs);
-    await placeOrder({ cart });
-    clearCart();
-    router.push("/account/orders");
-  };
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (cart) {
-        setTotal(
-          cart.reduce(
-            (prev, current) => prev + current.price * current.quantity,
-            0
-          )
-        );
-      }
-    }
-  }, [cart]);
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: async (inputs: BillingSchemaType) => {
+      await updateBillingsInfo(inputs);
+      await placeOrder({ carts });
+      // setCarts([]);
+      toast.success("Order placed");
+      // router.push("/account/orders");
+    },
+  });
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <CustomFormField<BillingSchemaShape>
-            form={form}
-            input="text"
-            name="fullName"
-            title="Fullname"
-          />
-          <CustomFormField<BillingSchemaShape>
-            form={form}
-            input="number"
-            name="phone"
-            title="Phone"
-          />
-          <CustomFormField<BillingSchemaShape>
-            form={form}
-            input="text"
-            name="address"
-            title="Address"
-          />
-          <div>
-            <h2 className="text-end text-2xl font-bold">total : {total}</h2>
-          </div>
-          <CustomFormSubmitBtn isPending={isPending}>
-            Palace order
-          </CustomFormSubmitBtn>
+    <Card className="bg-cyan-800 max-w-md m-auto">
+      <CardHeader>
+        <CardTitle>Billings & Shipping</CardTitle>
+        <CardDescription>
+          Add or update info for billings & shippings
+        </CardDescription>
+      </CardHeader>
+      <CardContent className=" ">
+        <form onSubmit={form.handleSubmit((v) => mutate(v))}>
+          <FieldGroup>
+            <Controller
+              name="fullName"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Name</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} {...field} />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="phone"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Phone No.</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} {...field} />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="address"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Address</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} {...field} />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Field>
+              <FieldContent className="text-xl font-bold">
+                Total Price: {totalAmount} &#x09F3;
+                {/* {carts.reduce((prev, curr) => prev + curr.price, 0)} &#x09F3; */}
+              </FieldContent>
+            </Field>
+            <Field orientation={"vertical"} className="justify-end">
+              <Button disabled={isPending}>
+                <LoadingSwap isLoading={isPending}>Submit</LoadingSwap>
+              </Button>
+            </Field>
+          </FieldGroup>
         </form>
-      </Form>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

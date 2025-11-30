@@ -1,14 +1,29 @@
+"use cache: private";
+
 import { Suspense } from "react";
 import { getBillingsInfo } from "../actions";
 import CheckoutForm from "../components/checkout/checkout-form";
+import { getQueryClient } from "@/tanstack-query/get-query-client";
+import Loading from "@/components/shared/loading";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { ErrorBoundary } from "react-error-boundary";
+import Error from "@/components/shared/error";
 
-export default function CheckoutPage() {
-  const promsie = getBillingsInfo();
+export default async function CheckoutPage() {
+  const qc = getQueryClient();
+  void qc.prefetchQuery({
+    queryKey: ["billings"],
+    queryFn: () => getBillingsInfo(),
+  });
   return (
     <div className="min-h-screen max-w-5xl m-auto p-4 ">
-      <Suspense fallback={<div>Loading...</div>}>
-        <CheckoutForm promise={promsie} />
-      </Suspense>
+      <HydrationBoundary state={dehydrate(qc)}>
+        <ErrorBoundary fallback={<Error />}>
+          <Suspense fallback={<Loading />}>
+            <CheckoutForm />
+          </Suspense>
+        </ErrorBoundary>
+      </HydrationBoundary>
     </div>
   );
 }

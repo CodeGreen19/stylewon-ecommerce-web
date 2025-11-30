@@ -1,77 +1,75 @@
 import { create } from "zustand";
-
-export type CartItem = {
-  productId: string;
-  name: string;
-  price: number;
-  image?: string;
-  quantity: number;
-};
+import { CartType } from "../types";
+import { saveCart } from "../helpers";
 
 type Store = {
-  cart: CartItem[];
-  addToCart: (item: CartItem) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, qty: number) => void;
-  clearCart: () => void;
+  carts: CartType[];
+  setCarts: (carts: CartType[]) => void;
+  guestUserAddToCart: (cart: CartType) => void;
+  guestUserRemoveFromCart: (productId: string) => void;
+  guestUserUpdateQuantity: (productId: string, qty: number) => void;
+  guestUserClearCart: () => void;
+  selectedSize: string;
+  setSelectedSize: (size: string) => void;
+  selectedColor: string;
+  setSelectedColor: (color: string) => void;
+  selectedImage: string;
+  setSelectedImage: (img: string) => void;
+  quantity: number;
+  setQuantity: (q: number) => void;
 };
 
-// Key for localStorage
-const CART_KEY = "app_cart";
-
-// Safe load from localStorage
-function loadCartFromLocalStorage(): CartItem[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const stored = localStorage.getItem(CART_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
-}
-
-// Save state → localStorage
-function saveCart(items: CartItem[]) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(CART_KEY, JSON.stringify(items));
-}
-
 export const useCartItems = create<Store>((set, get) => ({
-  cart: loadCartFromLocalStorage(),
-  addToCart: (item) => {
-    const cart = get().cart;
+  carts: [], // <-- fixed
+  setCarts: (carts) => {
+    set({ carts });
+    saveCart(carts);
+  },
+  guestUserAddToCart: (item) => {
+    const carts = get().carts;
 
-    // Check if item already exists → merge quantity
-    const existing = cart.find((i) => i.productId === item.productId);
+    const existing = carts.find((i) => i.productId === item.productId);
 
     let updatedCart;
     if (existing) {
-      updatedCart = cart.map((i) =>
+      updatedCart = carts.map((i) =>
         i.productId === item.productId
           ? { ...i, quantity: i.quantity + item.quantity }
           : i
       );
     } else {
-      updatedCart = [...cart, item];
+      updatedCart = [...carts, item];
     }
 
-    set({ cart: updatedCart });
+    set({ carts: updatedCart });
     saveCart(updatedCart);
   },
-  removeFromCart: (productId) => {
-    const updated = get().cart.filter((item) => item.productId !== productId);
-    set({ cart: updated });
+
+  guestUserRemoveFromCart: (productId) => {
+    const updated = get().carts.filter((item) => item.productId !== productId);
+    set({ carts: updated });
     saveCart(updated);
   },
-  updateQuantity: (productId, qty) => {
-    const updated = get().cart.map((item) =>
+
+  guestUserUpdateQuantity: (productId, qty) => {
+    const updated = get().carts.map((item) =>
       item.productId === productId ? { ...item, quantity: qty } : item
     );
-    set({ cart: updated });
+    set({ carts: updated });
     saveCart(updated);
   },
-  clearCart: () => {
-    set({ cart: [] });
+
+  guestUserClearCart: () => {
+    set({ carts: [] });
     saveCart([]);
   },
+
+  quantity: 1,
+  selectedColor: "",
+  selectedSize: "",
+  selectedImage: "",
+  setQuantity: (num) => set({ quantity: num }),
+  setSelectedColor: (s) => set({ selectedColor: s }),
+  setSelectedSize: (s) => set({ selectedSize: s }),
+  setSelectedImage: (img) => set({ selectedImage: img }),
 }));

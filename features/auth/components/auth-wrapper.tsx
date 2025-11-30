@@ -25,7 +25,7 @@ export default function AuthWrapper({ children }: { children: ReactNode }) {
           <DialogTitle></DialogTitle>
         </DialogHeader>
         <div className="flex w-full flex-col gap-6">
-          <Tabs defaultValue="account">
+          <Tabs defaultValue="signin">
             <TabsList className="rounded-full grid grid-cols-2">
               <TabsTrigger
                 className="rounded-full data-[state=active]:bg-cyan-600"

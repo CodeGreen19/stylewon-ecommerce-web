@@ -13,7 +13,7 @@ export async function getOrders() {
     redirect("/");
   }
   const ordersInfo = await db.query.orders.findMany({
-    with: { items: true },
+    with: { orderItems: true },
     where: eq(orders.userId, account.user.id),
   });
   return ordersInfo;
