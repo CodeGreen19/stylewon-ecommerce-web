@@ -1,9 +1,9 @@
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { relatedProducts } from "../../actions";
+import { relatedProducts } from "../../server/actions";
 import { ProductCard } from "../product-card";
-import Heading from "../heading";
+import Heading from "../shared/heading";
 
 export default function RelatedProducts() {
   const { data } = useSuspenseQuery({
@@ -11,9 +11,9 @@ export default function RelatedProducts() {
     queryFn: () => relatedProducts(),
   });
   return (
-    <div className="max-w-5xl m-auto">
+    <div className="m-auto max-w-5xl">
       <Heading>Related products</Heading>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 px-2 lg:px-0">
+      <div className="grid grid-cols-2 gap-1 px-2 md:grid-cols-3 lg:grid-cols-4 lg:px-0">
         {data.map((product) => (
           <ProductCard key={product.id} {...product} />
         ))}

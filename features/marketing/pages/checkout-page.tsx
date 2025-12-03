@@ -1,7 +1,7 @@
 "use cache: private";
 
 import { Suspense } from "react";
-import { getBillingsInfo } from "../actions";
+import { getBillingsInfo } from "../server/actions";
 import CheckoutForm from "../components/checkout/checkout-form";
 import { getQueryClient } from "@/tanstack-query/get-query-client";
 import Loading from "@/components/shared/loading";
@@ -16,7 +16,7 @@ export default async function CheckoutPage() {
     queryFn: () => getBillingsInfo(),
   });
   return (
-    <div className="min-h-screen max-w-5xl m-auto p-4 ">
+    <div className="m-auto min-h-screen max-w-5xl p-4">
       <HydrationBoundary state={dehydrate(qc)}>
         <ErrorBoundary fallback={<Error />}>
           <Suspense fallback={<Loading />}>

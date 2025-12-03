@@ -6,6 +6,7 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldTitle,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { LoadingSwap } from "@/components/ui/loading-swap";
@@ -14,28 +15,35 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { signupSchema, SignupSchemaType } from "../schemas";
+import { CompType, signupSchema, SignupSchemaType } from "../schemas";
+import { FcGoogle } from "react-icons/fc";
+import { Separator } from "@/components/ui/separator";
+import { useAuthStore } from "../hooks/use-auth-hook";
+import { isPhoneNumberExist } from "../action";
+import GoogleSignInButton from "./google-signin-button";
 
-export default function SignUpForm({
-  closeDialog,
-}: {
-  closeDialog: () => void;
-}) {
+export function SignUpForm({ switchTo }: { switchTo: (v: CompType) => void }) {
+  const { setSignupSigninPhoneNo } = useAuthStore();
   const form = useForm<SignupSchemaType>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
+      phoneNo: "",
     },
   });
 
   const { isPending, mutate } = useMutation({
     mutationFn: async (input: SignupSchemaType) => {
-      const res = await authClient.signUp.email(input);
+      const existPhoneNumber = await isPhoneNumberExist(input.phoneNo);
+      if (existPhoneNumber) {
+        return toast.error("Phone number already exists, try another");
+      }
+      const res = await authClient.phoneNumber.sendOtp({
+        phoneNumber: input.phoneNo,
+      });
       if (res.data) {
-        toast.success("Signup success");
-        closeDialog();
+        setSignupSigninPhoneNo(input.phoneNo);
+        toast.success("OTP has sent");
+        switchTo("OTP_VERIFY");
       }
       if (res.error) {
         toast.error(res.error.message || res.error.statusText);
@@ -44,47 +52,54 @@ export default function SignUpForm({
   });
 
   return (
-    <form onSubmit={form.handleSubmit((v) => mutate(v))}>
-      <FieldGroup className="gap-4">
-        <Controller
-          name="name"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Full name</FieldLabel>
-              <Input aria-invalid={fieldState.invalid} {...field} />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Controller
-          name="email"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Email address</FieldLabel>
-              <Input aria-invalid={fieldState.invalid} {...field} />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Controller
-          name="password"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Password</FieldLabel>
-              <Input aria-invalid={fieldState.invalid} {...field} />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Field orientation={"horizontal"} className="justify-end">
-          <Button className="rounded-full" disabled={isPending}>
-            <LoadingSwap isLoading={isPending}>Submit</LoadingSwap>
-          </Button>
-        </Field>
-      </FieldGroup>
-    </form>
+    <div className="space-y-6 py-6">
+      <form onSubmit={form.handleSubmit((v) => mutate(v))}>
+        <FieldGroup className="gap-4">
+          <Controller
+            name="phoneNo"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Phone number</FieldLabel>
+                <Input
+                  className="h-10"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Field>
+            <Button className="h-10" disabled={isPending}>
+              <LoadingSwap isLoading={isPending}>Send OTP via SMS</LoadingSwap>
+            </Button>
+          </Field>
+          <Field>
+            <FieldTitle>
+              Already have an account ?{" "}
+              <div
+                className="cursor-pointer"
+                onClick={() => switchTo("SIGN_IN")}
+              >
+                Sign in
+              </div>
+            </FieldTitle>
+          </Field>
+        </FieldGroup>
+      </form>
+
+      <Separator className="relative">
+        <span className="bg-background absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2">
+          Or
+        </span>
+      </Separator>
+      <Field>
+        <GoogleSignInButton />
+      </Field>
+    </div>
   );
 }

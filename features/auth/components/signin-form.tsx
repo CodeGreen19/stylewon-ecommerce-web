@@ -1,83 +1,193 @@
 "use client";
 
-import CustomFormField from "@/components/form/custom-form-field";
-import CustomFormSubmitBtn from "@/components/form/custom-form-submit-btn";
-import { Form } from "@/components/ui/form";
-import { authClient } from "@/lib/auth-client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { signinSchema, SigninSchemaType } from "../schemas";
+import { Button } from "@/components/ui/button";
 import {
   Field,
-  FieldContent,
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldTitle,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import { LoadingSwap } from "@/components/ui/loading-swap";
+import { Separator } from "@/components/ui/separator";
+import { authClient } from "@/lib/auth-client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Fragment, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
-export default function SigninForm({
-  closeDialog,
+import { toast } from "sonner";
+import { CompType, signinSchema, SigninSchemaType } from "../schemas";
+import { useAuthStore } from "../hooks/use-auth-hook";
+import { PasswordInput } from "@/components/ui/password-input";
+import GoogleSignInButton from "./google-signin-button";
+import { detectInputType } from "../helpers";
+
+export function SignInForm({
+  switchTo,
+  onClose,
 }: {
-  closeDialog: () => void;
+  switchTo: (v: CompType) => void;
+  onClose?: () => void;
 }) {
+  const { setSignupSigninPhoneNo } = useAuthStore();
+  const [signinType, setSigninType] = useState<"PASSWORD" | "OTP">("PASSWORD");
   const form = useForm<SigninSchemaType>({
     resolver: zodResolver(signinSchema),
     defaultValues: {
-      email: "",
+      phoneOrEmail: "",
       password: "",
     },
   });
 
   const { isPending, mutate } = useMutation({
     mutationFn: async (input: SigninSchemaType) => {
-      const res = await authClient.signIn.email(input);
-      if (res.data) {
-        toast.success("Signin success");
-        closeDialog();
+      if (signinType === "PASSWORD") {
+        const type = detectInputType(input.phoneOrEmail);
+        if (type === "email") {
+          const res = await authClient.signIn.email({
+            email: input.phoneOrEmail,
+            password: input.password,
+          });
+          if (res.data) {
+            toast.success("Signed in successfully");
+            onClose && onClose();
+          }
+          if (res.error) {
+            toast.error(res.error.message || res.error.statusText);
+          }
+        }
+        if (type === "phone") {
+          const res = await authClient.signIn.phoneNumber({
+            password: input.password,
+            phoneNumber: input.phoneOrEmail,
+          });
+          if (res.data) {
+            toast.success("Signed in successfully");
+            onClose && onClose();
+          }
+          if (res.error) {
+            toast.error(res.error.message || res.error.statusText);
+          }
+        }
       }
-      if (res.error) {
-        toast.error(res.error.message || res.error.statusText);
+      if (signinType === "OTP") {
+        const res = await authClient.phoneNumber.sendOtp({
+          phoneNumber: input.phoneOrEmail,
+        });
+        if (res.data) {
+          setSignupSigninPhoneNo(input.phoneOrEmail);
+          toast.success("OTP has sent");
+          switchTo("OTP_VERIFY");
+        }
+        if (res.error) {
+          toast.error(res.error.message || res.error.statusText);
+        }
       }
     },
   });
 
   return (
-    <form onSubmit={form.handleSubmit((v) => mutate(v))}>
-      <FieldGroup className="gap-4">
-        <Controller
-          name="email"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Email address</FieldLabel>
-              <Input aria-invalid={fieldState.invalid} {...field} />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
+    <div className="space-y-6 py-6">
+      <form onSubmit={form.handleSubmit((v) => mutate(v))}>
+        <FieldGroup className="gap-4">
+          <Controller
+            name="phoneOrEmail"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel className="justify-between">
+                  <span>Phone number or email</span>{" "}
+                  {signinType === "OTP" ? (
+                    <span
+                      onClick={() => {
+                        setSigninType("PASSWORD");
+                        form.setValue("password", "");
+                      }}
+                      className="underline"
+                    >
+                      Use password
+                    </span>
+                  ) : (
+                    <span
+                      onClick={() => {
+                        setSigninType("OTP");
+                        form.setValue("password", "12345678");
+                      }}
+                      className="underline"
+                    >
+                      Use OTP instead
+                    </span>
+                  )}
+                </FieldLabel>
+                <Input
+                  className="h-10"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          {signinType === "PASSWORD" && (
+            <Fragment>
+              <Controller
+                name="password"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Password</FieldLabel>
+                    <PasswordInput
+                      className="h-10"
+                      aria-invalid={fieldState.invalid}
+                      {...field}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <div className="mb-3 flex items-center justify-end text-sm underline">
+                <span onClick={() => switchTo("FORGOT_PASSWORD")}>
+                  Forgot password?
+                </span>
+              </div>
+            </Fragment>
           )}
-        />
-        <Controller
-          name="password"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Password</FieldLabel>
-              <Input aria-invalid={fieldState.invalid} {...field} />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Field orientation={"horizontal"} className="justify-end">
-          <Button className="rounded-full" disabled={isPending}>
-            <LoadingSwap isLoading={isPending}>Submit</LoadingSwap>
-          </Button>
-        </Field>
-      </FieldGroup>
-    </form>
+
+          <Field>
+            <Button className="h-10" disabled={isPending}>
+              <LoadingSwap isLoading={isPending}>
+                {signinType === "OTP" ? "Send OTP" : "Submit"}
+              </LoadingSwap>
+            </Button>
+          </Field>
+          <Field>
+            <FieldTitle>
+              Don&apos;t have any account ?{" "}
+              <div
+                className="cursor-pointer"
+                onClick={() => switchTo("SIGN_UP")}
+              >
+                Sign up
+              </div>
+            </FieldTitle>
+          </Field>
+        </FieldGroup>
+      </form>
+
+      <Separator className="relative mb-10">
+        <span className="bg-background absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2">
+          Or
+        </span>
+      </Separator>
+      <Field>
+        <GoogleSignInButton />
+      </Field>
+    </div>
   );
 }

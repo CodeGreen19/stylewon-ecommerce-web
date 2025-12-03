@@ -20,7 +20,11 @@ import { LoadingSwap } from "@/components/ui/loading-swap";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
-import { getBillingsInfo, placeOrder, updateBillingsInfo } from "../../actions";
+import {
+  getBillingsInfo,
+  placeOrder,
+  updateBillingsInfo,
+} from "../../server/actions";
 import { useCartItems } from "../../hooks/use-cart-items";
 import { billingSchema, BillingSchemaType } from "../../schemas";
 import { toast } from "sonner";
@@ -40,7 +44,7 @@ export default function CheckoutForm() {
     resolver: zodResolver(billingSchema),
     defaultValues: {
       fullName: billings ? billings.fullName : "",
-      address: billings ? billings.address ?? "" : "",
+      address: billings ? (billings.address ?? "") : "",
       phone: billings ? billings.phone : "",
     },
   });
@@ -56,7 +60,7 @@ export default function CheckoutForm() {
   });
 
   return (
-    <Card className="bg-cyan-800 max-w-md m-auto">
+    <Card className="m-auto max-w-md bg-cyan-800">
       <CardHeader>
         <CardTitle>Billings & Shipping</CardTitle>
         <CardDescription>

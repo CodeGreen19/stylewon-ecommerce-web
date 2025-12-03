@@ -2,8 +2,8 @@
 
 import React, { Suspense, use } from "react";
 import { ProductCard } from "../product-card";
-import Heading from "../heading";
-import { getProducts } from "../../queries";
+import { Heading } from "../shared/heading";
+import { getProducts } from "../../server/queries";
 
 export default function HomeProductListing({
   promise,
@@ -11,7 +11,7 @@ export default function HomeProductListing({
   promise: ReturnType<typeof getProducts>;
 }) {
   return (
-    <div className="my-10 max-w-5xl m-auto px-2 xl:px-0">
+    <div className="m-auto my-10 max-w-5xl px-2 xl:px-0">
       <Heading>Trending</Heading>
       <Suspense fallback={<div>Fetching...</div>}>
         <Products promise={promise} />
@@ -23,7 +23,7 @@ export default function HomeProductListing({
 function Products({ promise }: { promise: ReturnType<typeof getProducts> }) {
   const products = use(promise);
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 lg:gap-4 gap-1 ">
+    <div className="grid grid-cols-2 gap-1 md:grid-cols-4 lg:gap-4">
       {products.map((p) => (
         <ProductCard
           key={p.id}

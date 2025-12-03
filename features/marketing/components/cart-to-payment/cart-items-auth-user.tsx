@@ -5,9 +5,11 @@ import { getQueryClient } from "@/tanstack-query/get-query-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Ban, Minus, Plus } from "lucide-react";
 import Image from "next/image";
-import { cartActions, getCartItems } from "../../actions";
+import { cartActions, getCartItems } from "../../server/actions";
+import { authClient } from "@/lib/auth-client";
 
 export default function CartItemsAuthUsers() {
+  const { data: session } = authClient.useSession();
   const qc = getQueryClient();
   const {
     isPending,
@@ -15,7 +17,8 @@ export default function CartItemsAuthUsers() {
     error,
   } = useQuery({
     queryKey: ["login-user-carts"],
-    queryFn: () => getCartItems(),
+    queryFn: () => getCartItems({ userId: session?.user.id }),
+    enabled: !!session,
   });
   const { isPending: mutation_pending, mutate } = useMutation({
     mutationFn: cartActions,
@@ -26,24 +29,24 @@ export default function CartItemsAuthUsers() {
   if (isPending) return "Loading...";
   if (error) return "Error";
 
-  if (carts.length === 0)
+  if (!carts || carts.length === 0)
     return (
-      <div className="flex justify-center items-center space-x-2 rounded-md py-20 border border-cyan-600 border-dashed">
+      <div className="flex items-center justify-center space-x-2 rounded-md border border-dashed border-cyan-600 py-20">
         <span>Your cart is empty</span> <Ban />
       </div>
     );
 
   return (
-    <div className="max-w-xl mx-auto space-y-4">
+    <div className="mx-auto max-w-xl space-y-4">
       {carts.map((item) => (
         <div
           key={item.productId}
-          className=" p-4 border  border-cyan-500 rounded-xl shadow-sm relative"
+          className="relative rounded-xl border border-cyan-500 p-4 shadow-sm"
         >
           <div className="space-y-3">
-            <h3 className="font-medium truncate">{item.name}</h3>
+            <h3 className="truncate font-medium">{item.name}</h3>
             <div className="flex items-center gap-3">
-              <div className="rounded-sm overflow-hidden">
+              <div className="overflow-hidden rounded-sm">
                 {item.imageUrl && (
                   <Image
                     src={item.imageUrl}
@@ -53,14 +56,14 @@ export default function CartItemsAuthUsers() {
                   />
                 )}
               </div>
-              <p className="text-base font-semibold ">
+              <p className="text-base font-semibold">
                 {item.price * item.quantity} &#x09F3;
               </p>
             </div>
           </div>
 
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center my-2">
+            <div className="my-2 flex items-center">
               <Button
                 disabled={mutation_pending}
                 variant={"outline"}
@@ -87,7 +90,7 @@ export default function CartItemsAuthUsers() {
               onClick={() =>
                 mutate({ cartId: item.id, type: "REMOVE_FROM_CART" })
               }
-              className="text-red-500 rounded-full text-sm"
+              className="rounded-full text-sm text-red-500"
             >
               remove
             </Button>

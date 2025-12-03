@@ -1,25 +1,16 @@
 "use client";
 
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { ReactNode, useEffect, useState } from "react";
-import { useCartItems } from "../../hooks/use-cart-items";
-import CartItems from "./cart-items";
-import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
-import { loadCartFromLocalStorage } from "../../helpers";
+import Loading from "@/components/shared/loading";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { authClient } from "@/lib/auth-client";
-import CartItemsAuthUsers from "./cart-items-auth-user";
-import { getCartItems } from "../../actions";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { ReactNode, useEffect, useState } from "react";
+import { getCartItems } from "../../server/actions";
+import { loadCartFromLocalStorage } from "../../helpers";
+import { useCartItems } from "../../hooks/use-cart-items";
+import { CartItemsBox } from "./cart-items-box";
+import { DBCartItemsBox } from "./db-cart-items-box";
+import { AuthBox } from "@/features/auth/components/auth-box";
 export default function CartToPaymentWrapper({
   children,
 }: {
@@ -27,15 +18,14 @@ export default function CartToPaymentWrapper({
 }) {
   const { isPending, data: session } = authClient.useSession();
   const [open, setOpen] = useState(false);
-  const router = useRouter();
-  //login carts
-  const { data: authCarts } = useQuery({
+  const [shouldAuthBoxOpen, setShouldAuthBoxOpen] = useState(false);
+  //db carts
+  const { data } = useQuery({
     queryKey: ["login-user-carts"],
     queryFn: () => getCartItems({ userId: session?.user.id }),
     enabled: !!session,
   });
-  const loggedinCarts = authCarts ?? [];
-
+  const dbCarts = data ?? [];
   // localstorage carts
   const { carts, setCarts } = useCartItems();
 
@@ -45,62 +35,37 @@ export default function CartToPaymentWrapper({
     }
   }, []);
 
+  console.log(shouldAuthBoxOpen);
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <span className="relative">
           {children}
-
-          {(carts.length !== 0 || loggedinCarts.length !== 0) && (
-            <span className="inline-block animate-pulse absolute top-0 right-0 animation-duration-[3000] size-2 rounded-full bg-white "></span>
+          {(session ? dbCarts.length !== 0 : carts.length !== 0) && (
+            <ExistCartTag />
           )}
         </span>
       </SheetTrigger>
-      <SheetContent className="sm:max-w-lg border-cyan-950 noise-bg">
-        <SheetHeader>
-          <SheetTitle className="text-2xl">Shopping Carts</SheetTitle>
-        </SheetHeader>
-        {isPending ? (
-          <div>Loading...</div>
+      <SheetContent className="noise-bg overflow-y-auto border-cyan-950 sm:max-w-lg">
+        {shouldAuthBoxOpen ? (
+          <div className="p-6">
+            <AuthBox />
+          </div>
+        ) : isPending ? (
+          <Loading />
         ) : session ? (
-          <div className="px-4">
-            <CartItemsAuthUsers />
-          </div>
+          <DBCartItemsBox />
         ) : (
-          <div className="px-4">
-            <CartItems />
-          </div>
+          <CartItemsBox setOpenAuth={(v) => setShouldAuthBoxOpen(v)} />
         )}
-        <SheetFooter className="flex flex-row items-center justify-between">
-          <Button variant={"ghost"} className="py-6 rounded-full ">
-            Total :
-            {session
-              ? loggedinCarts.reduce((prev, current) => {
-                  return prev + current.price * current.quantity;
-                }, 0)
-              : carts.reduce((prev, current) => {
-                  return prev + current.price * current.quantity;
-                }, 0)}{" "}
-            &#x09F3;
-          </Button>
-          <Button
-            onClick={() => {
-              if (isPending) {
-                return null;
-              }
-              setOpen(false);
-              if (session) {
-                router.push("/checkout");
-              } else {
-                router.push(`/auth/sign-in?success_redirect_to=/checkout`);
-              }
-            }}
-            className="py-6  rounded-full w-32"
-          >
-            Proceed <ChevronRight />
-          </Button>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
+  );
+}
+
+function ExistCartTag() {
+  return (
+    <span className="animation-duration-[3000] absolute top-0 right-0 inline-block size-2 animate-pulse rounded-full bg-white"></span>
   );
 }

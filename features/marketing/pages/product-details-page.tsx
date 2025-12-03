@@ -4,10 +4,10 @@ import { getQueryClient } from "@/tanstack-query/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { relatedProducts } from "../actions";
+import { relatedProducts } from "../server/actions";
 import DetailsBox from "../components/product-details/details-box";
 import RelatedProducts from "../components/product-details/related-products";
-import { productDetails } from "../queries";
+import { productDetails } from "../server/queries";
 
 export default async function ProductDetailsPage({ slug }: { slug: string }) {
   const qc = getQueryClient();

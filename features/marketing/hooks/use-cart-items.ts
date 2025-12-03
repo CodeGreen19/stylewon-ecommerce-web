@@ -35,7 +35,7 @@ export const useCartItems = create<Store>((set, get) => ({
       updatedCart = carts.map((i) =>
         i.productId === item.productId
           ? { ...i, quantity: i.quantity + item.quantity }
-          : i
+          : i,
       );
     } else {
       updatedCart = [...carts, item];
@@ -53,7 +53,7 @@ export const useCartItems = create<Store>((set, get) => ({
 
   guestUserUpdateQuantity: (productId, qty) => {
     const updated = get().carts.map((item) =>
-      item.productId === productId ? { ...item, quantity: qty } : item
+      item.productId === productId ? { ...item, quantity: qty } : item,
     );
     set({ carts: updated });
     saveCart(updated);

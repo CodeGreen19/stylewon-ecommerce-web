@@ -3,13 +3,13 @@ import { Input } from "@/components/ui/input";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-dashed border-cyan-500 mt-10">
-      <div className="max-w-5xl mx-auto px-3 xl:px-0 py-10">
+    <footer className="mt-10 border-t border-dashed">
+      <div className="mx-auto max-w-5xl px-3 py-10 xl:px-0">
         {/* Top Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div>
-            <h4 className="font-semibold mb-3 text-base">Shop</h4>
-            <ul className="space-y-2 text-sm text-foreground">
+            <h4 className="mb-3 text-base font-semibold">Shop</h4>
+            <ul className="text-foreground space-y-2 text-sm">
               <li>Men</li>
               <li>Women</li>
               <li>Kids</li>
@@ -18,8 +18,8 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-3 text-base">Support</h4>
-            <ul className="space-y-2 text-sm text-foreground">
+            <h4 className="mb-3 text-base font-semibold">Support</h4>
+            <ul className="text-foreground space-y-2 text-sm">
               <li>Contact Us</li>
               <li>FAQs</li>
               <li>Shipping</li>
@@ -28,8 +28,8 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-3 text-base">Company</h4>
-            <ul className="space-y-2 text-sm text-foreground">
+            <h4 className="mb-3 text-base font-semibold">Company</h4>
+            <ul className="text-foreground space-y-2 text-sm">
               <li>About Us</li>
               <li>Careers</li>
               <li>Privacy Policy</li>
@@ -38,20 +38,14 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-3 text-base">Newsletter</h4>
+            <h4 className="mb-3 text-base font-semibold">Newsletter</h4>
             <div className="flex items-center gap-2">
-              <Input
-                className="border-cyan-800 bg-cyan-200"
-                type="email"
-                placeholder="Your email"
-              />
-              <Button className=" px-4 text-sm bg-black text-white">
-                Join
-              </Button>
+              <Input className="" type="email" placeholder="Your email" />
+              <Button className="bg-black px-4 text-sm text-white">Join</Button>
             </div>
           </div>
         </div>
-        <div className="border-t  border-dashed border-cyan-600 pt-5 mt-10  text-sm text-foreground flex justify-between">
+        <div className="text-foreground mt-10 flex justify-between border-t border-dashed pt-5 text-sm">
           <p>© 2025 ModernShop. All rights reserved.</p>
           <p className="text-xs">Crafted with ❤️</p>
         </div>

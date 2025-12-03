@@ -1,5 +1,5 @@
 import React from "react";
-import Heading from "../heading";
+import Heading from "../shared/heading";
 import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
 import AdditionalInfoDescriptions from "./additional-info-description";
 import AdditionalInfoReviews from "./additional-info-reviews";
@@ -7,9 +7,9 @@ import AdditionalInfoQNA from "./additional-info-qna";
 
 export default function AdditionalInfo({ des }: { des: string }) {
   return (
-    <div className="p-2 lg:p-0 max-w-5xl m-auto">
+    <div className="m-auto max-w-5xl p-2 lg:p-0">
       <Heading>Additional Info</Heading>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Field>
           <FieldLabel>Descriptions</FieldLabel>
           <FieldContent>

@@ -14,9 +14,9 @@ import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { Fragment, useEffect } from "react";
 import { toast } from "sonner";
-import { addToCart } from "../../actions";
+import { addToCart } from "../../server/actions";
 import { useCartItems } from "../../hooks/use-cart-items";
-import { productDetails } from "../../queries";
+import { productDetails } from "../../server/queries";
 import { CartType } from "../../types";
 import AdditionalInfo from "./additional-info";
 import { getQueryClient } from "@/tanstack-query/get-query-client";
@@ -36,19 +36,19 @@ export default function DetailsBox({ product }: { product: Product }) {
   useEffect(() => {
     setSelectedImage(product.images[0]);
     return () => {
-      setSelectedColor(""), setSelectedSize(""), setQuantity(1);
+      (setSelectedColor(""), setSelectedSize(""), setQuantity(1));
     };
   }, []);
 
   if (!item) return <div>No product found.</div>;
 
   return (
-    <section className="mx-auto max-w-5xl px-2 lg:px-0 xl:px-0 py-2 lg:py-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <section className="mx-auto max-w-5xl px-2 py-2 lg:px-0 lg:py-10 xl:px-0">
+      <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         {/* Left: Image gallery */}
         <div className="space-y-4">
           {/* Main image */}
-          <div className="aspect-square w-full rounded-xl border-cyan-600 border overflow-hidden bg-muted">
+          <div className="bg-muted aspect-square w-full overflow-hidden rounded-xl border border-cyan-600">
             <Image
               src={selectedImage || product.images[0]}
               alt={item.name}
@@ -64,7 +64,7 @@ export default function DetailsBox({ product }: { product: Product }) {
               <div
                 key={img}
                 onClick={() => setSelectedImage(img)}
-                className="aspect-square w-20 flex-none rounded-lg overflow-hidden border border-cyan-800 hover:opacity-80 transition"
+                className="aspect-square w-20 flex-none overflow-hidden rounded-lg border border-cyan-800 transition hover:opacity-80"
               >
                 <Image
                   src={img}
@@ -153,7 +153,7 @@ function QuantityAndAddtoCartBtn({ product }: { product: Product }) {
   });
   return (
     <Fragment>
-      <div className="flex gap-4 items-center">
+      <div className="flex items-center gap-4">
         <div className="flex items-center gap-1">
           <Button onClick={() => quantity > 1 && setQuantity(quantity - 1)}>
             <Minus />
@@ -163,7 +163,7 @@ function QuantityAndAddtoCartBtn({ product }: { product: Product }) {
             <Plus />
           </Button>
         </div>
-        <div className="text-2xl text-cyan-200 font-bold">
+        <div className="text-2xl font-bold text-cyan-200">
           {Number(product.price)} &#x09F3;
         </div>
       </div>
