@@ -1,34 +1,29 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { LoadingSwap } from "@/components/ui/loading-swap";
 import { PasswordInput } from "@/components/ui/password-input";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import {
-  CompType,
-  resetPasswordSchema,
-  ResetPasswordSchemaType,
-} from "../schemas";
-import { useAuthStore } from "../hooks/use-auth-hook";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Countdown from "react-countdown";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { useAuthStore } from "../hooks/use-auth-hook";
+import { resetPasswordSchema, ResetPasswordSchemaType } from "../schemas";
+import { AuthComponentPropsType } from "../types";
+import { SubmitButtonWithLoading } from "./submit-button-with-loading";
 
-export function ResetPassword({
-  switchTo,
-}: {
-  switchTo: (v: CompType) => void;
-}) {
+export function ResetPasswordForm({
+  switchComponentTo,
+}: AuthComponentPropsType) {
   const { signupSigninPhoneNo } = useAuthStore();
   const form = useForm<ResetPasswordSchemaType>({
     resolver: zodResolver(resetPasswordSchema),
@@ -47,7 +42,7 @@ export function ResetPassword({
       });
 
       if (res.data) {
-        switchTo("SIGN_IN");
+        switchComponentTo && switchComponentTo("SIGN_IN");
         toast.success("New password has set. Now singin");
       }
       if (res.error) {
@@ -98,9 +93,9 @@ export function ResetPassword({
         />
 
         <Field>
-          <Button className="h-10" disabled={isPending}>
-            <LoadingSwap isLoading={isPending}>Send OTP</LoadingSwap>
-          </Button>
+          <SubmitButtonWithLoading isPending={isPending}>
+            Send OTP{" "}
+          </SubmitButtonWithLoading>
         </Field>
       </FieldGroup>
     </form>

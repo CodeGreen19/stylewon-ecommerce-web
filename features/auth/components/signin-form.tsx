@@ -17,20 +17,20 @@ import { useMutation } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { toast } from "sonner";
-import { CompType, signinSchema, SigninSchemaType } from "../schemas";
-import { useAuthStore } from "../hooks/use-auth-hook";
 import { PasswordInput } from "@/components/ui/password-input";
-import GoogleSignInButton from "./google-signin-button";
+import { toast } from "sonner";
 import { detectInputType } from "../helpers";
+import { useAuthStore } from "../hooks/use-auth-hook";
+import { signinSchema, SigninSchemaType } from "../schemas";
+import { AuthComponentPropsType } from "../types";
+import GoogleSignInButton from "./google-signin-button";
+
+const DUMMY_PASSWROD_TO_USE_OTP_SIGNIN = "12345678";
 
 export function SignInForm({
-  switchTo,
+  switchComponentTo,
   onClose,
-}: {
-  switchTo: (v: CompType) => void;
-  onClose?: () => void;
-}) {
+}: AuthComponentPropsType) {
   const { setSignupSigninPhoneNo } = useAuthStore();
   const [signinType, setSigninType] = useState<"PASSWORD" | "OTP">("PASSWORD");
   const form = useForm<SigninSchemaType>({
@@ -73,16 +73,34 @@ export function SignInForm({
         }
       }
       if (signinType === "OTP") {
-        const res = await authClient.phoneNumber.sendOtp({
-          phoneNumber: input.phoneOrEmail,
-        });
-        if (res.data) {
-          setSignupSigninPhoneNo(input.phoneOrEmail);
-          toast.success("OTP has sent");
-          switchTo("OTP_VERIFY");
+        const type = detectInputType(input.phoneOrEmail);
+        if (type === "email") {
+          const res = await authClient.emailOtp.sendVerificationOtp({
+            email: input.phoneOrEmail,
+            type: "sign-in",
+          });
+          if (res.data) {
+            setSignupSigninPhoneNo(input.phoneOrEmail);
+            toast.success("OTP has sent");
+            switchComponentTo && switchComponentTo("OTP_VERIFY_SIGNIN_EMAIL");
+          }
+          if (res.error) {
+            toast.error(res.error.message || res.error.statusText);
+          }
         }
-        if (res.error) {
-          toast.error(res.error.message || res.error.statusText);
+        if (type === "phone") {
+          const res = await authClient.phoneNumber.sendOtp({
+            phoneNumber: input.phoneOrEmail,
+          });
+          if (res.data) {
+            setSignupSigninPhoneNo(input.phoneOrEmail);
+            toast.success("OTP has sent");
+            switchComponentTo &&
+              switchComponentTo("OTP_VERIFY_SIGNIN_PHONE_NO");
+          }
+          if (res.error) {
+            toast.error(res.error.message || res.error.statusText);
+          }
         }
       }
     },
@@ -113,7 +131,10 @@ export function SignInForm({
                     <span
                       onClick={() => {
                         setSigninType("OTP");
-                        form.setValue("password", "12345678");
+                        form.setValue(
+                          "password",
+                          DUMMY_PASSWROD_TO_USE_OTP_SIGNIN,
+                        );
                       }}
                       className="underline"
                     >
@@ -152,7 +173,11 @@ export function SignInForm({
                 )}
               />
               <div className="mb-3 flex items-center justify-end text-sm underline">
-                <span onClick={() => switchTo("FORGOT_PASSWORD")}>
+                <span
+                  onClick={() =>
+                    switchComponentTo && switchComponentTo("FORGOT_PASSWORD")
+                  }
+                >
                   Forgot password?
                 </span>
               </div>
@@ -171,7 +196,9 @@ export function SignInForm({
               Don&apos;t have any account ?{" "}
               <div
                 className="cursor-pointer"
-                onClick={() => switchTo("SIGN_UP")}
+                onClick={() =>
+                  switchComponentTo && switchComponentTo("SIGN_UP")
+                }
               >
                 Sign up
               </div>

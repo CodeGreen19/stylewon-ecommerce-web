@@ -1,13 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { LoadingSwap } from "@/components/ui/loading-swap";
 import { PasswordInput } from "@/components/ui/password-input";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,8 +13,10 @@ import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { addPasswordSchema, AddPasswordSchemaType } from "../schemas";
+import { AuthComponentPropsType } from "../types";
+import { SubmitButtonWithLoading } from "./submit-button-with-loading";
 
-export function AddPassword({ onClose }: { onClose?: () => void }) {
+export function AddPasswordForm({ onClose }: AuthComponentPropsType) {
   const form = useForm<AddPasswordSchemaType>({
     resolver: zodResolver(addPasswordSchema),
     defaultValues: {
@@ -28,7 +28,7 @@ export function AddPassword({ onClose }: { onClose?: () => void }) {
   const { isPending, mutate } = useMutation({
     mutationFn: async (input: AddPasswordSchemaType) => {
       const res = await authClient.changePassword({
-        currentPassword: "passcode",
+        currentPassword: process.env.NEXT_PUBLIC_DEFAULT_USER_PASSWORD!,
         newPassword: input.password,
       });
 
@@ -77,9 +77,9 @@ export function AddPassword({ onClose }: { onClose?: () => void }) {
         />
 
         <Field>
-          <Button className="h-10" disabled={isPending}>
-            <LoadingSwap isLoading={isPending}>Submit</LoadingSwap>
-          </Button>
+          <SubmitButtonWithLoading isPending={isPending}>
+            Submit
+          </SubmitButtonWithLoading>
         </Field>
       </FieldGroup>
     </form>

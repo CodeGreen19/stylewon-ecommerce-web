@@ -19,26 +19,25 @@ import { Input } from "@/components/ui/input";
 import { LoadingSwap } from "@/components/ui/loading-swap";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { useCartItems } from "../../hooks/use-cart-items";
+import { billingSchema, BillingSchemaType } from "../../schemas";
 import {
   getBillingsInfo,
   placeOrder,
   updateBillingsInfo,
 } from "../../server/actions";
-import { useCartItems } from "../../hooks/use-cart-items";
-import { billingSchema, BillingSchemaType } from "../../schemas";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 export default function CheckoutForm() {
-  const router = useRouter();
   const {
     data: { totalAmount, billings },
   } = useSuspenseQuery({
     queryKey: ["billings"],
     queryFn: () => getBillingsInfo(),
   });
-  const { carts, setCarts } = useCartItems();
+  const { carts } = useCartItems();
 
   const form = useForm<BillingSchemaType>({
     resolver: zodResolver(billingSchema),

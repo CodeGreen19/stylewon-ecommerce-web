@@ -1,13 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { LoadingSwap } from "@/components/ui/loading-swap";
-import { authClient } from "@/lib/auth-client";
+import { SignOutButton } from "@/features/auth/components/sign-out-button";
 import { cn } from "@/lib/utils";
-import { Home, Layout, List, LucideLogOut, User } from "lucide-react";
+import { Home, Layout, List, User } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { usePathname } from "next/navigation";
 import { NavigateHeading } from "../components/shared/heading";
 
 const data = [
@@ -73,29 +70,7 @@ function Navigator({ pathname }: { pathname: string }) {
           </Link>
         ))}
       </div>
-      <SignOut />
+      <SignOutButton />
     </div>
-  );
-}
-
-function SignOut() {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  return (
-    <Button
-      onClick={() => {
-        startTransition(async () => {
-          await authClient.signOut();
-          router.push("/");
-        });
-      }}
-      variant={"ghost"}
-      className="text-destructive mt-2 w-full justify-start rounded-sm p-6 px-5"
-    >
-      <LoadingSwap isLoading={isPending}>
-        <LucideLogOut />
-      </LoadingSwap>
-      {"Sign out"}
-    </Button>
   );
 }

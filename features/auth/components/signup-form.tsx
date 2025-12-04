@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
@@ -9,20 +8,20 @@ import {
   FieldTitle,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { LoadingSwap } from "@/components/ui/loading-swap";
+import { Separator } from "@/components/ui/separator";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { CompType, signupSchema, SignupSchemaType } from "../schemas";
-import { FcGoogle } from "react-icons/fc";
-import { Separator } from "@/components/ui/separator";
+import { isPhoneNumberExist } from "../actions";
 import { useAuthStore } from "../hooks/use-auth-hook";
-import { isPhoneNumberExist } from "../action";
+import { signupSchema, SignupSchemaType } from "../schemas";
+import { AuthComponentPropsType } from "../types";
 import GoogleSignInButton from "./google-signin-button";
+import { SubmitButtonWithLoading } from "./submit-button-with-loading";
 
-export function SignUpForm({ switchTo }: { switchTo: (v: CompType) => void }) {
+export function SignUpForm({ switchComponentTo }: AuthComponentPropsType) {
   const { setSignupSigninPhoneNo } = useAuthStore();
   const form = useForm<SignupSchemaType>({
     resolver: zodResolver(signupSchema),
@@ -37,13 +36,14 @@ export function SignUpForm({ switchTo }: { switchTo: (v: CompType) => void }) {
       if (existPhoneNumber) {
         return toast.error("Phone number already exists, try another");
       }
+
       const res = await authClient.phoneNumber.sendOtp({
         phoneNumber: input.phoneNo,
       });
       if (res.data) {
         setSignupSigninPhoneNo(input.phoneNo);
         toast.success("OTP has sent");
-        switchTo("OTP_VERIFY");
+        switchComponentTo && switchComponentTo("OTP_VERIFY_SIGNUP");
       }
       if (res.error) {
         toast.error(res.error.message || res.error.statusText);
@@ -74,16 +74,18 @@ export function SignUpForm({ switchTo }: { switchTo: (v: CompType) => void }) {
           />
 
           <Field>
-            <Button className="h-10" disabled={isPending}>
-              <LoadingSwap isLoading={isPending}>Send OTP via SMS</LoadingSwap>
-            </Button>
+            <SubmitButtonWithLoading isPending={isPending}>
+              Send OTP via SMS
+            </SubmitButtonWithLoading>
           </Field>
           <Field>
             <FieldTitle>
               Already have an account ?{" "}
               <div
                 className="cursor-pointer"
-                onClick={() => switchTo("SIGN_IN")}
+                onClick={() =>
+                  switchComponentTo && switchComponentTo("SIGN_IN")
+                }
               >
                 Sign in
               </div>

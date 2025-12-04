@@ -2,14 +2,14 @@
 
 import Error from "@/components/shared/error";
 import Loading from "@/components/shared/loading";
-import { getUserInfo } from "@/features/auth/actions";
-import { CompletedProfileBox } from "@/features/auth/components/profile/completed-profile-box";
 import { getQueryClient } from "@/tanstack-query/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { ProfileSections } from "./profile-sections";
+import { getUserInfo } from "../../actions";
 
-export default async function AccountProfilePage() {
+export async function CompletedProfileBox() {
   const qc = getQueryClient();
   void qc.prefetchQuery({
     queryKey: ["user-info"],
@@ -20,7 +20,7 @@ export default async function AccountProfilePage() {
     <HydrationBoundary state={dehydrate(qc)}>
       <ErrorBoundary fallback={<Error />}>
         <Suspense fallback={<Loading />}>
-          <CompletedProfileBox />
+          <ProfileSections />
         </Suspense>
       </ErrorBoundary>
     </HydrationBoundary>

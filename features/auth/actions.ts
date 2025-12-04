@@ -1,10 +1,12 @@
 "use server";
 
-import { account, user } from "@/auth-schema";
+import { user } from "@/auth-schema";
 import { db } from "@/drizzle/db";
+import { eq } from "drizzle-orm";
+import { account } from "@/auth-schema";
 import { auth } from "@/lib/auth";
 import { hashPassword } from "better-auth/crypto";
-import { and, eq } from "drizzle-orm";
+import { and } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -19,11 +21,9 @@ export async function getUserInfo() {
   }
 
   let userData = session.user;
-  const isPasswordAccountExist = accounts.find(
+  const isPasswordAccountExist = !!accounts.find(
     (a) => a.providerId === "credential",
-  )
-    ? true
-    : false;
+  );
   if (session.user.email.includes("@my-site.com")) {
     userData.email = "";
   }
@@ -31,8 +31,9 @@ export async function getUserInfo() {
     session.user.name = "";
   }
 
-  return { ...userData, isPasswordAccountExist };
+  return { user: userData, isPasswordAccountExist };
 }
+
 export async function addPhoneNumber({ phoneNo }: { phoneNo: string }) {
   const res = await auth.api.getSession({ headers: await headers() });
   if (!res) {
@@ -52,7 +53,7 @@ export async function addPhoneNumber({ phoneNo }: { phoneNo: string }) {
   return false;
 }
 
-export async function createAccountIfNeeded() {
+export async function createCredentialAccountIfNeeded() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
@@ -68,7 +69,7 @@ export async function createAccountIfNeeded() {
       ),
     );
   if (!isAccountExist) {
-    const password = await hashPassword("passcode");
+    const password = await hashPassword(process.env.DEFAULT_USER_PASSWORD!);
     await db.insert(account).values({
       accountId: crypto.randomUUID(),
       id: crypto.randomUUID(),
@@ -77,4 +78,12 @@ export async function createAccountIfNeeded() {
       password,
     });
   }
+}
+
+export async function isPhoneNumberExist(phoneNumber: string) {
+  const [existPhoneNumber] = await db
+    .select({ phnNo: user.phoneNumber })
+    .from(user)
+    .where(eq(user.phoneNumber, phoneNumber));
+  return existPhoneNumber && existPhoneNumber.phnNo === phoneNumber;
 }

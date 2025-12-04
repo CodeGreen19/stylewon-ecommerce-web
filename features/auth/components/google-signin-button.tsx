@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { LoadingSwap } from "@/components/ui/loading-swap";
 import { authClient } from "@/lib/auth-client";
 import { useMutation } from "@tanstack/react-query";
-import React from "react";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 

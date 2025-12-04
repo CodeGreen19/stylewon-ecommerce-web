@@ -1,9 +1,8 @@
-import React from "react";
-import { CartType } from "../../types";
-import { Ban, Minus, Plus } from "lucide-react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Minus, Plus } from "lucide-react";
+import Image from "next/image";
 import { useCartItems } from "../../hooks/use-cart-items";
+import { CartType } from "../../types";
 
 export function CartItem({
   item,

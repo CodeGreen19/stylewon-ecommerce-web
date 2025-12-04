@@ -1,13 +1,13 @@
 "use server";
 
 import { db } from "@/drizzle/db";
+import { carts, products } from "@/drizzle/schema";
 import { billingInfo } from "@/drizzle/schemas/billings";
 import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { BillingSchemaType } from "../schemas";
-import { carts, orderItems, orders, products } from "@/drizzle/schema";
 import { CartType } from "../types";
 
 export async function getBillingsInfo() {

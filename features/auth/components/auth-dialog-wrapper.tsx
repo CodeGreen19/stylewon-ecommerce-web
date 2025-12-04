@@ -8,13 +8,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ReactNode, useState } from "react";
-import CompleteAuth from "./complete-auth";
+import { CompletedAuthBox } from "./completed-auth-box";
 
 export function AuthDialogWrapper({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  const closeDialog = () => {
-    setOpen(false);
-  };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -22,7 +19,7 @@ export function AuthDialogWrapper({ children }: { children: ReactNode }) {
         <DialogHeader>
           <DialogTitle></DialogTitle>
         </DialogHeader>
-        <CompleteAuth />
+        <CompletedAuthBox />
       </DialogContent>
     </Dialog>
   );

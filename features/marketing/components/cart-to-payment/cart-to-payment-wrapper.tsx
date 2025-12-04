@@ -5,12 +5,11 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
 import { ReactNode, useEffect, useState } from "react";
-import { getCartItems } from "../../server/actions";
 import { loadCartFromLocalStorage } from "../../helpers";
 import { useCartItems } from "../../hooks/use-cart-items";
+import { getCartItems } from "../../server/actions";
 import { CartItemsBox } from "./cart-items-box";
 import { DBCartItemsBox } from "./db-cart-items-box";
-import { AuthBox } from "@/features/auth/components/auth-box";
 export default function CartToPaymentWrapper({
   children,
 }: {
@@ -50,7 +49,7 @@ export default function CartToPaymentWrapper({
       <SheetContent className="noise-bg overflow-y-auto border-cyan-950 sm:max-w-lg">
         {shouldAuthBoxOpen ? (
           <div className="p-6">
-            <AuthBox />
+            <div>Todo: auth required</div>
           </div>
         ) : isPending ? (
           <Loading />

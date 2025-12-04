@@ -1,4 +1,5 @@
-import { ButtonWithLoading } from "@/components/shared/button-with-loading";
+"use client";
+
 import {
   Field,
   FieldError,
@@ -13,17 +14,22 @@ import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import { SubmitButtonWithLoading } from "../submit-button-with-loading";
+import { ProfileComponentPropsType } from "../../types";
 
 const nameSchema = z.object({
   name: z.string().min(3, "name must be at least 3 char"),
 });
 
-export function AddOrUpdateName({ name }: { name: string }) {
+export function AddOrUpdateName({
+  user,
+  onSuccess,
+}: ProfileComponentPropsType) {
   const qc = getQueryClient();
   const form = useForm<z.infer<typeof nameSchema>>({
     resolver: zodResolver(nameSchema),
     defaultValues: {
-      name,
+      name: user.name,
     },
   });
 
@@ -36,6 +42,7 @@ export function AddOrUpdateName({ name }: { name: string }) {
       if (res.data) {
         toast.success("Name is updated");
         await qc.invalidateQueries({ queryKey: ["user-info"] });
+        onSuccess && onSuccess();
       }
       if (res.error) {
         toast.error(res.error.message || res.error.statusText);
@@ -51,7 +58,7 @@ export function AddOrUpdateName({ name }: { name: string }) {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>New password</FieldLabel>
+              <FieldLabel>Full name</FieldLabel>
               <Input
                 className="h-10"
                 aria-invalid={fieldState.invalid}
@@ -62,7 +69,9 @@ export function AddOrUpdateName({ name }: { name: string }) {
           )}
         />
 
-        <ButtonWithLoading isPending={isPending}>Update</ButtonWithLoading>
+        <SubmitButtonWithLoading isPending={isPending}>
+          Update
+        </SubmitButtonWithLoading>
       </FieldGroup>
     </form>
   );

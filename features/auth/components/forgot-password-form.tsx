@@ -15,17 +15,13 @@ import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useAuthStore } from "../hooks/use-auth-hook";
-import {
-  CompType,
-  forgotPasswordSchema,
-  ForgotPasswordSchemaType,
-} from "../schemas";
+import { forgotPasswordSchema, ForgotPasswordSchemaType } from "../schemas";
+import { AuthComponentPropsType } from "../types";
+import { SubmitButtonWithLoading } from "./submit-button-with-loading";
 
-export function ForgotPassword({
-  switchTo,
-}: {
-  switchTo: (v: CompType) => void;
-}) {
+export function ForgotPasswordForm({
+  switchComponentTo,
+}: AuthComponentPropsType) {
   const { setSignupSigninPhoneNo } = useAuthStore();
   const form = useForm<ForgotPasswordSchemaType>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -43,7 +39,7 @@ export function ForgotPassword({
       if (res.data) {
         setSignupSigninPhoneNo(input.phoneOrEmail);
         toast.success("OTP has sent");
-        switchTo("RESET_PASSWORD");
+        switchComponentTo && switchComponentTo("RESET_PASSWORD");
       }
       if (res.error) {
         toast.error(res.error.message || res.error.statusText);
@@ -71,9 +67,9 @@ export function ForgotPassword({
         />
 
         <Field>
-          <Button className="h-10" disabled={isPending}>
-            <LoadingSwap isLoading={isPending}>Send OTP</LoadingSwap>
-          </Button>
+          <SubmitButtonWithLoading isPending={isPending}>
+            Submit
+          </SubmitButtonWithLoading>
         </Field>
       </FieldGroup>
     </form>

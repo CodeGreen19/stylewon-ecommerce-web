@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Ban, Minus, Plus } from "lucide-react";
-import { useCartItems } from "../../hooks/use-cart-items";
 import Image from "next/image";
+import { useCartItems } from "../../hooks/use-cart-items";
 
 export default function CartItems() {
   const { carts, guestUserUpdateQuantity, guestUserRemoveFromCart } =
@@ -11,22 +11,22 @@ export default function CartItems() {
 
   if (carts.length === 0)
     return (
-      <div className="flex justify-center items-center space-x-2 rounded-md py-20 border border-cyan-600 border-dashed">
+      <div className="flex items-center justify-center space-x-2 rounded-md border border-dashed border-cyan-600 py-20">
         <span>Your cart is empty</span> <Ban />
       </div>
     );
 
   return (
-    <div className="max-w-xl mx-auto space-y-4">
+    <div className="mx-auto max-w-xl space-y-4">
       {carts.map((item) => (
         <div
           key={item.productId}
-          className=" p-4 border  border-cyan-500 rounded-xl shadow-sm relative"
+          className="relative rounded-xl border border-cyan-500 p-4 shadow-sm"
         >
           <div className="space-y-3">
-            <h3 className="font-medium truncate">{item.name}</h3>
+            <h3 className="truncate font-medium">{item.name}</h3>
             <div className="flex items-center gap-3">
-              <div className="rounded-sm overflow-hidden">
+              <div className="overflow-hidden rounded-sm">
                 {item.imageUrl && (
                   <Image
                     src={item.imageUrl}
@@ -36,20 +36,20 @@ export default function CartItems() {
                   />
                 )}
               </div>
-              <p className="text-base font-semibold ">
+              <p className="text-base font-semibold">
                 {item.price * item.quantity} &#x09F3;
               </p>
             </div>
           </div>
 
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center my-2">
+            <div className="my-2 flex items-center">
               <Button
                 variant={"outline"}
                 onClick={() =>
                   guestUserUpdateQuantity(
                     item.productId,
-                    item.quantity > 1 ? item.quantity - 1 : 1
+                    item.quantity > 1 ? item.quantity - 1 : 1,
                   )
                 }
               >
@@ -68,7 +68,7 @@ export default function CartItems() {
             <Button
               variant={"outline"}
               onClick={() => guestUserRemoveFromCart(item.productId)}
-              className="text-red-500 rounded-full text-sm"
+              className="rounded-full text-sm text-red-500"
             >
               remove
             </Button>

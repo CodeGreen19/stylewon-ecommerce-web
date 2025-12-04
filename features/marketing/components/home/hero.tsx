@@ -1,10 +1,10 @@
 import Image from "next/image";
 
-export default function Hero() {
+export function Hero() {
   return (
-    <div className=" max-w-5xl m-auto p-2 lg:p-0 lg:pt-4">
+    <div className="m-auto max-w-5xl p-2 lg:p-0 lg:pt-4">
       <Image
-        className="object-contain w-full rounded-sm"
+        className="w-full rounded-sm object-contain"
         src={"/banner-daraz.avif"}
         height={300}
         width={900}

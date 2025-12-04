@@ -2,8 +2,8 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { relatedProducts } from "../../server/actions";
-import { ProductCard } from "../product-card";
-import Heading from "../shared/heading";
+import { ProductCard } from "../shared/product-card";
+import { Heading } from "../shared/heading";
 
 export default function RelatedProducts() {
   const { data } = useSuspenseQuery({

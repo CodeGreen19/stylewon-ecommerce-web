@@ -1,9 +1,8 @@
-import React from "react";
-import Heading from "../shared/heading";
 import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
+import { Heading } from "../shared/heading";
 import AdditionalInfoDescriptions from "./additional-info-description";
-import AdditionalInfoReviews from "./additional-info-reviews";
 import AdditionalInfoQNA from "./additional-info-qna";
+import AdditionalInfoReviews from "./additional-info-reviews";
 
 export default function AdditionalInfo({ des }: { des: string }) {
   return (

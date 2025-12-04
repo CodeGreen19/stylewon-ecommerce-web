@@ -1,4 +1,4 @@
-import Heading from "@/features/marketing/components/shared/heading";
+import { Heading } from "@/features/marketing/components/shared/heading";
 import { getOrders } from "../queries";
 import { ErrorBoundary } from "react-error-boundary";
 import { Suspense } from "react";

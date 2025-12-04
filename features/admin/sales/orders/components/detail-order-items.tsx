@@ -6,12 +6,12 @@ import { getOrdersItems } from "../actions";
 // Mobile Skeleton Item
 function MobileSkeletonItem() {
   return (
-    <div className="flex gap-4 p-4 border-b border-gray-100 animate-pulse">
-      <div className="bg-gray-200 rounded-lg w-20 h-20 " />
+    <div className="flex animate-pulse gap-4 border-b border-gray-100 p-4">
+      <div className="h-20 w-20 rounded-lg bg-gray-200" />
       <div className="flex-1 space-y-3 py-1">
-        <div className="h-5 bg-gray-200 rounded w-3/4" />
-        <div className="h-4 bg-gray-200 rounded w-1/2" />
-        <div className="h-6 bg-gray-300 rounded w-28" />
+        <div className="h-5 w-3/4 rounded bg-gray-200" />
+        <div className="h-4 w-1/2 rounded bg-gray-200" />
+        <div className="h-6 w-28 rounded bg-gray-300" />
       </div>
     </div>
   );
@@ -28,7 +28,7 @@ export default function DetailOrdersItems({ orderId }: { orderId: string }) {
     return (
       <div className="bg-white">
         <div className="px-4 pt-4 pb-2">
-          <div className="h-7 bg-gray-200 rounded w-32 animate-pulse" />
+          <div className="h-7 w-32 animate-pulse rounded bg-gray-200" />
         </div>
         {[...Array(4)].map((_, i) => (
           <MobileSkeletonItem key={i} />
@@ -40,8 +40,8 @@ export default function DetailOrdersItems({ orderId }: { orderId: string }) {
   // Error State
   if (error) {
     return (
-      <div className="bg-red-50 border-t-4 border-red-500 p-4 text-center">
-        <p className="text-red-700 font-medium">Failed to load items</p>
+      <div className="border-t-4 border-red-500 bg-red-50 p-4 text-center">
+        <p className="font-medium text-red-700">Failed to load items</p>
       </div>
     );
   }
@@ -49,7 +49,7 @@ export default function DetailOrdersItems({ orderId }: { orderId: string }) {
   // Empty State
   if (!data || data.length === 0) {
     return (
-      <div className="bg-gray-50 text-center py-12">
+      <div className="bg-gray-50 py-12 text-center">
         <p className="text-gray-500">No items in this order</p>
       </div>
     );
@@ -57,15 +57,15 @@ export default function DetailOrdersItems({ orderId }: { orderId: string }) {
 
   const totalAmount = data.reduce(
     (sum, item) => sum + item.quantity * Number(item.price),
-    0
+    0,
   );
 
   return (
-    <div className="bg-white mt-4 min-h-screen">
+    <div className="mt-4 min-h-screen bg-white">
       {/* Header */}
-      <div className="px-5 pt-4 pb-3 border-b border-gray-100 sticky top-0 bg-white z-10">
+      <div className="sticky top-0 z-10 border-b border-gray-100 bg-white px-5 pt-4 pb-3">
         <h3 className="text-lg font-semibold text-gray-900">Order Items</h3>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="mt-1 text-sm text-gray-500">
           {data.length} item{data.length > 1 ? "s" : ""}
         </p>
       </div>
@@ -79,18 +79,18 @@ export default function DetailOrdersItems({ orderId }: { orderId: string }) {
             <div key={item.id} className="p-4">
               <div className="flex gap-4">
                 {/* Product Image */}
-                <div className="relative w-20 h-20 bg-gray-100 rounded-xl overflow-hidden  border border-gray-200">
-                  {item.image ? (
+                <div className="relative h-20 w-20 overflow-hidden rounded-xl border border-gray-200 bg-gray-100">
+                  {item.imageUrl ? (
                     <Image
-                      src={item.image}
+                      src={item.imageUrl}
                       alt={item.name}
                       fill
                       className="object-cover"
                     />
                   ) : (
-                    <div className="flex items-center justify-center h-full text-gray-300">
+                    <div className="flex h-full items-center justify-center text-gray-300">
                       <svg
-                        className="w-10 h-10"
+                        className="h-10 w-10"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -107,8 +107,8 @@ export default function DetailOrdersItems({ orderId }: { orderId: string }) {
                 </div>
 
                 {/* Details */}
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-gray-900 text-base line-clamp-2">
+                <div className="min-w-0 flex-1">
+                  <h4 className="line-clamp-2 text-base font-medium text-gray-900">
                     {item.name}
                   </h4>
 
@@ -135,8 +135,8 @@ export default function DetailOrdersItems({ orderId }: { orderId: string }) {
       </div>
 
       {/* Total Summary - Sticky Bottom */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-200 px-5 py-4 mt-4">
-        <div className="flex justify-between items-center">
+      <div className="sticky bottom-0 mt-4 border-t border-gray-200 bg-white px-5 py-4">
+        <div className="flex items-center justify-between">
           <span className="text-base font-medium text-gray-700">
             Total Amount
           </span>

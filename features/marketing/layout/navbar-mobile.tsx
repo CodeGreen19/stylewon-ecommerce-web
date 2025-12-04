@@ -1,3 +1,5 @@
+"use client";
+
 import Logo from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import CompleteAuth from "@/features/auth/components/complete-auth";
+import { CompletedAuthBox } from "@/features/auth/components/completed-auth-box";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { User as UserType } from "better-auth";
 import {
@@ -33,12 +35,12 @@ type UserSession = {
   isPending: boolean;
   user: UserType | undefined;
 };
-type CompType = "CATEGORY" | "USER" | "SEARCH";
+type DrawarComponnentType = "CATEGORY" | "USER" | "SEARCH";
 export function NavbarMobile(session: UserSession) {
   const isMobile = useIsMobile();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedDrawerType, setSelectedDrawerType] =
-    useState<CompType>("CATEGORY");
+    useState<DrawarComponnentType>("CATEGORY");
   return (
     <div className="flex items-center justify-between">
       <section>
@@ -48,6 +50,7 @@ export function NavbarMobile(session: UserSession) {
         <Button>
           Cart <ShoppingCartIcon />
         </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button>
@@ -109,15 +112,11 @@ export function NavbarMobile(session: UserSession) {
             ) : selectedDrawerType == "SEARCH" ? (
               <div>search</div>
             ) : (
-              <CompleteAuth onClose={() => setOpenDrawer(false)} />
+              <CompletedAuthBox onClose={() => setOpenDrawer(false)} />
             )}
           </div>
         </DrawerContent>
       </Drawer>
     </div>
   );
-}
-
-function MenuItems({ isPending, user }: UserSession) {
-  return null;
 }

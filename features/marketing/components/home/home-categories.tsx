@@ -1,6 +1,5 @@
-import React from "react";
-import { FileText, Image as ImageIcon, Video, Music } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { FileText, Image as ImageIcon, Music, Video } from "lucide-react";
 
 const categories = [
   { label: "Text", icon: FileText },
@@ -9,15 +8,15 @@ const categories = [
   { label: "Audio", icon: Music },
 ];
 
-export default function HomeCategories() {
+export function HomeCategories() {
   return (
-    <div className="grid grid-cols-4 max-w-5xl m-auto gap-2 p-2 lg:p-0 lg:mt-5">
+    <div className="m-auto grid max-w-5xl grid-cols-4 gap-2 p-2 lg:mt-5 lg:p-0">
       {categories.map((cat) => {
         const Icon = cat.icon;
         return (
           <Card
             key={cat.label}
-            className="rounded-md shadow-md hover:shadow-xl transition p-2 cursor-pointer bg-cyan-500 border-cyan-600 hover:scale-[1.02]"
+            className="cursor-pointer rounded-md border-cyan-600 bg-cyan-500 p-2 shadow-md transition hover:scale-[1.02] hover:shadow-xl"
           >
             <CardContent className="flex flex-col items-center justify-center gap-3">
               <Icon />

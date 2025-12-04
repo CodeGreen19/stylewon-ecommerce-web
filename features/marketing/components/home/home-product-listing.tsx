@@ -1,11 +1,11 @@
 "use client";
 
-import React, { Suspense, use } from "react";
-import { ProductCard } from "../product-card";
-import { Heading } from "../shared/heading";
+import { Suspense, use } from "react";
 import { getProducts } from "../../server/queries";
+import { Heading } from "../shared/heading";
+import { ProductCard } from "../shared/product-card";
 
-export default function HomeProductListing({
+export function HomeProductListing({
   promise,
 }: {
   promise: ReturnType<typeof getProducts>;

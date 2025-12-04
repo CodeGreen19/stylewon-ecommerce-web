@@ -3,9 +3,9 @@ import { db } from "@/drizzle/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { hashPassword } from "better-auth/crypto";
-import { phoneNumber } from "better-auth/plugins";
+import { emailOTP, phoneNumber } from "better-auth/plugins";
 import { and, eq } from "drizzle-orm";
-import { emailOTP } from "better-auth/plugins";
+import { OTP_EXPIRE_IN_SECONDS } from "./constants";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -20,15 +20,8 @@ export const auth = betterAuth({
     },
   },
   emailVerification: {
-    async sendVerificationEmail(data, request) {
-      console.log("email var=>", data);
-    },
-    async onEmailVerification(user, request) {
-      console.log("onemail-var", user);
-    },
-
-    async afterEmailVerification(user, request) {
-      console.log("after-email-var", user);
+    async sendVerificationEmail(data) {
+      console.log("email varrification link =>", data.url);
     },
   },
 
@@ -49,8 +42,15 @@ export const auth = betterAuth({
       update: {
         after: async (user, ctx) => {
           if (ctx?.path === "/verify-email") {
-            await db.delete(account).where(eq(account.userId, user.id));
-            console.log("prev account deleted");
+            await db
+              .delete(account)
+              .where(
+                and(
+                  eq(account.userId, user.id),
+                  eq(account.providerId, "google"),
+                ),
+              );
+            console.log("prev social account is deleted:");
           }
         },
       },
@@ -59,9 +59,13 @@ export const auth = betterAuth({
 
   plugins: [
     phoneNumber({
-      expiresIn: 30,
+      expiresIn: OTP_EXPIRE_IN_SECONDS,
       async sendPasswordResetOTP({ code, phoneNumber }, ctx) {
-        console.log(code, phoneNumber);
+        console.log(
+          "password request OTP and mobile number => ",
+          code,
+          phoneNumber,
+        );
       },
       async callbackOnVerification(data, ctx) {
         const userId = data.user.id;
@@ -75,7 +79,9 @@ export const auth = betterAuth({
             ),
           );
         if (!isAccountExist) {
-          const password = await hashPassword("passcode");
+          const password = await hashPassword(
+            process.env.DEFAULT_USER_PASSWORD!,
+          );
           await db.insert(account).values({
             accountId: crypto.randomUUID().toString(),
             id: crypto.randomUUID().toString(),
@@ -87,7 +93,7 @@ export const auth = betterAuth({
       },
 
       sendOTP: ({ phoneNumber, code }, ctx) => {
-        console.log(phoneNumber, code);
+        console.log("otp send to => ", phoneNumber, code);
       },
       signUpOnVerification: {
         getTempEmail: (phoneNumber) => {
@@ -99,9 +105,10 @@ export const auth = betterAuth({
       },
     }),
     emailOTP({
+      expiresIn: OTP_EXPIRE_IN_SECONDS,
       overrideDefaultEmailVerification: true,
       async sendVerificationOTP(data, ctx) {
-        console.log(data);
+        console.log("email varification otp =>", data);
       },
     }),
   ],
