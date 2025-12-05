@@ -1,7 +1,5 @@
 "use client";
 
-import { type LucideIcon } from "lucide-react";
-
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -12,17 +10,9 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { adminSidebarNavItems } from "./utils";
 
-export type NavMainType = {
-  title: string;
-  lists: {
-    title: string;
-    url: string;
-    icon: LucideIcon;
-  }[];
-};
-
-export function NavMain({ navItems }: { navItems: NavMainType[] }) {
+export function AdminSidebarMenu() {
   const pathname = usePathname();
   const selectedRoute = (url: string) => {
     const originalUrl = url.split("?")[0];
@@ -32,8 +22,8 @@ export function NavMain({ navItems }: { navItems: NavMainType[] }) {
       return false;
     }
   };
-  return navItems.map((item) => (
-    <SidebarGroup key={item.title} className="py-0 ">
+  return adminSidebarNavItems.map((item) => (
+    <SidebarGroup key={item.title} className="py-0">
       <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
       <SidebarMenu className="">
         {item.lists.map((list) => (
@@ -41,9 +31,8 @@ export function NavMain({ navItems }: { navItems: NavMainType[] }) {
             <Link href={list.url}>
               <SidebarMenuButton
                 className={cn(
-                  "py-5 px-2 rounded-full ",
-                  selectedRoute(list.url) &&
-                    "bg-primary text-white hover:bg-primary active:text-white active:bg-primary hover:text-white"
+                  "rounded-full px-2 py-5",
+                  selectedRoute(list.url) && "bg-sidebar-accent",
                 )}
               >
                 <list.icon />

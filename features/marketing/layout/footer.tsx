@@ -1,10 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
 export default function Footer() {
   return (
     <footer className="mt-10 border-t border-dashed">
-      <div className="mx-auto max-w-5xl px-3 py-10 xl:px-0">
+      <div className="mx-auto max-w-5xl px-4 py-10 xl:px-0">
         {/* Top Section */}
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div>
@@ -35,14 +32,6 @@ export default function Footer() {
               <li>Privacy Policy</li>
               <li>Terms of Service</li>
             </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-3 text-base font-semibold">Newsletter</h4>
-            <div className="flex items-center gap-2">
-              <Input className="" type="email" placeholder="Your email" />
-              <Button className="bg-black px-4 text-sm text-white">Join</Button>
-            </div>
           </div>
         </div>
         <div className="text-foreground mt-10 flex justify-between border-t border-dashed pt-5 text-sm">

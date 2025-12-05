@@ -1,30 +1,53 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { FileText, Image as ImageIcon, Music, Video } from "lucide-react";
+"use client";
+
+import { ChevronRight } from "lucide-react";
+import { Heading } from "../shared/heading";
 
 const categories = [
-  { label: "Text", icon: FileText },
-  { label: "Images", icon: ImageIcon },
-  { label: "Video", icon: Video },
-  { label: "Audio", icon: Music },
+  "Electronics",
+  "Fashion",
+  "Home & Garden",
+  "Sports",
+  "Beauty",
+  "Books",
+  "Toys & Games",
+  "Automotive",
+  "Health",
+  "Jewelry",
+  "Groceries",
+  "Pet Supplies",
+  "Baby Products",
+  "Office Supplies",
+  "Travel",
 ];
 
 export function HomeCategories() {
   return (
-    <div className="m-auto grid max-w-5xl grid-cols-4 gap-2 p-2 lg:mt-5 lg:p-0">
-      {categories.map((cat) => {
-        const Icon = cat.icon;
-        return (
-          <Card
-            key={cat.label}
-            className="cursor-pointer rounded-md border-cyan-600 bg-cyan-500 p-2 shadow-md transition hover:scale-[1.02] hover:shadow-xl"
-          >
-            <CardContent className="flex flex-col items-center justify-center gap-3">
-              <Icon />
-              <p className="text-lg font-medium">{cat.label}</p>
-            </CardContent>
-          </Card>
-        );
-      })}
-    </div>
+    <section className="mt-10 w-full px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl">
+        <Heading className="justify-center">Categories</Heading>
+
+        <div className="grid grid-cols-2 gap-1 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 xl:grid-cols-5">
+          {categories.map((category, index) => (
+            <div
+              key={category}
+              className="to flex items-center justify-between rounded-sm bg-linear-to-r from-transparent to-cyan-800 p-4"
+            >
+              <span>{category}</span>
+              <ChevronRight size={20} className="text-cyan-300" />
+            </div>
+          ))}
+        </div>
+
+        {categories.length > 8 && (
+          <div className="mt-10 text-center sm:hidden">
+            <button className="inline-flex items-center font-medium text-blue-600 transition-colors hover:text-blue-700">
+              View all categories
+              <ChevronRight className="ml-1 h-5 w-5" />
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

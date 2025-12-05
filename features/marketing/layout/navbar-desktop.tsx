@@ -47,7 +47,7 @@ export function NavbarDesktop(session: UserSession) {
           Cart <ShoppingCartIcon />
         </Button>
         {session.isPending ? (
-          <Skeleton className="h-9 w-24 bg-black/80" />
+          <Skeleton className="h-9 w-24 bg-white/80" />
         ) : session.user ? (
           <Link href={isMobile ? "/account" : "/account/dashboard"}>
             <Button>

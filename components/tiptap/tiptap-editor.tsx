@@ -44,7 +44,7 @@ interface MenuButtonProps {
 const MenuButton: React.FC<MenuButtonProps> = ({ active, onClick, icon }) => (
   <Button
     variant={active ? "default" : "outline"}
-    className={`mr-1 h-9 w-9 p-0 flex items-center justify-center transition ${
+    className={`mr-1 flex h-9 w-9 items-center justify-center p-0 transition ${
       active ? "bg-primary text-primary-foreground" : ""
     }`}
     onClick={onClick}
@@ -109,8 +109,8 @@ export default function TiptapEditor({
   if (!editor) return null;
 
   return (
-    <div className="rounded-lg space-y-4">
-      <div className="flex flex-wrap gap-2 mb-2 items-center">
+    <div className="space-y-4 rounded-lg">
+      <div className="mb-2 flex flex-wrap items-center gap-2">
         <MenuButton
           active={editor.isActive("bold")}
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -164,7 +164,7 @@ export default function TiptapEditor({
                     </FormItem>
                   )}
                 />
-                <div className="mt-4 flex items-center gap-1 justify-end">
+                <div className="mt-4 flex items-center justify-end gap-1">
                   <Button
                     type="button"
                     onClick={() => {
@@ -188,7 +188,7 @@ export default function TiptapEditor({
       {/* Editor */}
       <EditorContent
         editor={editor}
-        className="editor-content min-h-[220px] bg-white border rounded-lg p-4 focus:outline-none focus:ring-0  [&_.ProseMirror]:outline-none [&_.ProseMirror]:focus:outline-none"
+        className="editor-content min-h-[220px] rounded-lg border p-4 focus:ring-0 focus:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:focus:outline-none"
       />
     </div>
   );

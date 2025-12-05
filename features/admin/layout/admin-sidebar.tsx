@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Album,
-  Cat,
-  Inbox,
-  LifeBuoy,
-  List,
-  Send,
-  SquareDashedBottomCode,
-} from "lucide-react";
+import { LifeBuoy, Send, SquareDashedBottomCode } from "lucide-react";
 import * as React from "react";
 
 import {
@@ -20,8 +12,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavMain, NavMainType } from "@/features/layout/nav-main";
-import { NavUser } from "@/features/layout/nav-user";
+import { AdminAccounts } from "@/features/admin/layout/admin-accounts";
+import { AdminSidebarMenu } from "@/features/admin/layout/admin-sidebar-menu";
 
 const data = {
   user: {
@@ -44,52 +36,11 @@ const data = {
   ],
 };
 
-const navItems: NavMainType[] = [
-  {
-    title: "Home",
-    lists: [
-      {
-        title: "Overviews",
-        icon: Album,
-        url: "/admin/home/overviews",
-      },
-    ],
-  },
-  {
-    title: "Catalog",
-    lists: [
-      {
-        title: "Products",
-        icon: List,
-        url: "/admin/catalog/products",
-      },
-      {
-        title: "Inventory",
-        icon: Inbox,
-        url: "/admin/catalog/inventory",
-      },
-      {
-        title: "Categories",
-        icon: Cat,
-        url: "/admin/catalog/categories",
-      },
-    ],
-  },
-  {
-    title: "Sales",
-    lists: [
-      {
-        title: "Orders",
-        icon: List,
-        url: "/admin/sales/orders",
-      },
-    ],
-  },
-];
-
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AdminSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar variant="sidebar" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -98,8 +49,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-10 items-center justify-center rounded-sm">
                   <SquareDashedBottomCode className="size-6" />
                 </div>
-                <div className="grid flex-1 text-left text-sm  leading-tight">
-                  <span className="truncate font-bold leading-6 text-xl">
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate text-xl leading-6 font-bold">
                     Admin Panel
                   </span>
                   <span className="truncate text-xs leading-tight">
@@ -112,10 +63,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain navItems={navItems} />
+        <AdminSidebarMenu />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <AdminAccounts user={data.user} />
       </SidebarFooter>
     </Sidebar>
   );

@@ -11,7 +11,7 @@ export function HomeProductListing({
   promise: ReturnType<typeof getProducts>;
 }) {
   return (
-    <div className="m-auto my-10 max-w-5xl px-2 xl:px-0">
+    <div className="m-auto mt-10 max-w-5xl px-2 xl:px-0">
       <Heading>Trending</Heading>
       <Suspense fallback={<div>Fetching...</div>}>
         <Products promise={promise} />
