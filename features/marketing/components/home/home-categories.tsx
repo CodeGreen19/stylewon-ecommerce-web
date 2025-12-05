@@ -31,17 +31,17 @@ export function HomeCategories() {
           {categories.map((category, index) => (
             <div
               key={category}
-              className="to flex items-center justify-between rounded-sm bg-linear-to-r from-transparent to-cyan-800 p-4"
+              className="to to-secondary flex items-center justify-between rounded-sm bg-linear-to-r from-transparent p-4 shadow"
             >
               <span>{category}</span>
-              <ChevronRight size={20} className="text-cyan-300" />
+              <ChevronRight size={20} />
             </div>
           ))}
         </div>
 
         {categories.length > 8 && (
           <div className="mt-10 text-center sm:hidden">
-            <button className="inline-flex items-center font-medium text-blue-600 transition-colors hover:text-blue-700">
+            <button className="inline-flex items-center font-medium">
               View all categories
               <ChevronRight className="ml-1 h-5 w-5" />
             </button>

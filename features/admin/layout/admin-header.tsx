@@ -6,11 +6,11 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { adminSidebarNavItems, useAdminBreadcrumb } from "./utils";
 import { Fragment } from "react";
-import { ChevronRight } from "lucide-react";
+import { adminSidebarNavItems, useAdminBreadcrumb } from "./utils";
 
 export default function AdminHeader() {
   const pathname = usePathname();
@@ -28,7 +28,7 @@ export default function AdminHeader() {
         <Breadcrumb>
           <BreadcrumbList>
             {crumb.map((c, i) => (
-              <Fragment>
+              <Fragment key={i}>
                 <BreadcrumbItem key={c.url}>
                   <BreadcrumbLink asChild>
                     <Link href={c.url ?? ""}>{c.title}</Link>

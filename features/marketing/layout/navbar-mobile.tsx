@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import CartToPaymentWrapper from "../components/cart/cart-to-payment-wrapper";
 
 type UserSession = {
   isPending: boolean;
@@ -47,10 +48,11 @@ export function NavbarMobile(session: UserSession) {
         <Logo />
       </section>
       <section className="flex items-center gap-1 md:hidden">
-        <Button>
-          Cart <ShoppingCartIcon />
-        </Button>
-
+        <CartToPaymentWrapper>
+          <Button>
+            Cart <ShoppingCartIcon />
+          </Button>
+        </CartToPaymentWrapper>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button>

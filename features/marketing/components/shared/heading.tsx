@@ -42,13 +42,13 @@ export function Heading({
       )}
     >
       <span> {children}</span>
-      <Image
+      {/* <Image
         src={"/line.svg"}
         className="absolute top-8 h-9 w-16 object-contain md:top-9 md:w-52"
         height={1}
         width={300}
         alt="line-svg"
-      />
+      /> */}
     </div>
   );
 }

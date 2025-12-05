@@ -38,7 +38,7 @@ export function ManageImageWrapper({
   children: React.ReactNode;
   onSetImages: (images: string[]) => void;
 }) {
-  const isMobile = useIsMobile(1024);
+  const isMobile = useIsMobile();
   const { images, clearImages } = useAddImage();
   const [activeTab, setActiveTab] =
     useState<(typeof tabs)[number]>("Site Files");
@@ -48,19 +48,19 @@ export function ManageImageWrapper({
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className=" min-w-[98vw] h-[95vh] lg:min-w-[85vw] lg:h-[85vh] p-0 flex flex-col">
-        <DialogHeader className="p-4 md:px-6 pt-6 relative">
+      <DialogContent className="flex h-[95vh] min-w-[98vw] flex-col p-0 lg:h-[85vh] lg:min-w-[85vw]">
+        <DialogHeader className="relative p-4 pt-6 md:px-6">
           <DialogTitle className="text-start">
             <span>Asset Management</span>
             {images.length !== 0 && (
-              <div className="p-4 absolute top-3 right-4 lg:right-8 ">
+              <div className="absolute top-3 right-4 p-4 lg:right-8">
                 <Button
                   onClick={() => {
                     onSetImages(images);
                     closeRef.current?.click();
                     clearImages();
                   }}
-                  className="rounded-full "
+                  className="rounded-full"
                 >
                   Add to page ({images.length})
                 </Button>
@@ -77,15 +77,15 @@ export function ManageImageWrapper({
             setActiveTab={setActiveTab}
           />
         )}
-        <div className="flex-1 h-[50vh] rounded-md">
-          <div className="border grid grid-cols-1 lg:grid-cols-[200px_1fr_280px]  h-full">
-            <section className="border-r hidden lg:block relative">
+        <div className="h-[50vh] flex-1 rounded-md">
+          <div className="grid h-full grid-cols-1 border lg:grid-cols-[200px_1fr_280px]">
+            <section className="relative hidden border-r lg:block">
               <BigScreenSidebarSideBar
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
               />
             </section>
-            <section className="border-r overflow-y-auto relative">
+            <section className="relative overflow-y-auto border-r">
               {activeTab === "Site Files" ? (
                 <SiteFilesSection />
               ) : activeTab === "Trash" ? (
@@ -110,9 +110,9 @@ function MobileNavigationBar({
   setActiveTab: Dispatch<SetStateAction<(typeof tabs)[number]>>;
 }) {
   return (
-    <div className="flex items-center justify-between  px-4">
+    <div className="flex items-center justify-between px-4">
       <DropdownMenu>
-        <DropdownMenuTrigger className="w-40 border flex items-center justify-between py-1.5 p-4 rounded-full">
+        <DropdownMenuTrigger className="flex w-40 items-center justify-between rounded-full border p-4 py-1.5">
           <span>{activeTab}</span> <ChevronsUpDown className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -139,19 +139,19 @@ function BigScreenSidebarSideBar({
 }) {
   return (
     <div>
-      <div className="h-20 bg-accent/50 flex border-b px-4 items-center justify-center">
+      <div className="bg-accent/50 flex h-20 items-center justify-center border-b px-4">
         <UploadButton className="w-full" />
       </div>
       <div>
-        <h1 className="text-muted-foreground font-semibold text-sm p-4">
+        <h1 className="text-muted-foreground p-4 text-sm font-semibold">
           Manage
         </h1>
         {tabs.map((tab) => (
           <div
             onClick={() => setActiveTab(tab)}
             className={cn(
-              "p-2 px-5 hover:bg-accent gap-2.5 flex items-center",
-              tab === activeTab && "bg-accent"
+              "hover:bg-accent flex items-center gap-2.5 p-2 px-5",
+              tab === activeTab && "bg-accent",
             )}
             key={tab}
           >
@@ -160,8 +160,8 @@ function BigScreenSidebarSideBar({
           </div>
         ))}
       </div>
-      <div className=" p-4 lg:p-6 border-t  absolute bottom-0 left-0 w-full space-y-2">
-        <h4 className=" text-[10px] lg:text-sm ">1 MB used out of 20 GB</h4>
+      <div className="absolute bottom-0 left-0 w-full space-y-2 border-t p-4 lg:p-6">
+        <h4 className="text-[10px] lg:text-sm">1 MB used out of 20 GB</h4>
         <Progress />
       </div>
     </div>

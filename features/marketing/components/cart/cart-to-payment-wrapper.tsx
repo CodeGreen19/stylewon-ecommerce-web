@@ -34,8 +34,6 @@ export default function CartToPaymentWrapper({
     }
   }, []);
 
-  console.log(shouldAuthBoxOpen);
-
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>

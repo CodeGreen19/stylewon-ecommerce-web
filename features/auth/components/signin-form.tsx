@@ -208,7 +208,7 @@ export function SignInForm({
       </form>
 
       <Separator className="relative mb-10">
-        <span className="bg-background absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2">
+        <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-transparent p-2">
           Or
         </span>
       </Separator>

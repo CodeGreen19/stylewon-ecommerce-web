@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AuthDialogWrapper } from "@/features/auth/components/auth-dialog-wrapper";
 import Link from "next/link";
 import { useIsMobile } from "@/hooks/use-mobile";
+import CartToPaymentWrapper from "../components/cart/cart-to-payment-wrapper";
 type UserSession = {
   isPending: boolean;
   user: UserType | undefined;
@@ -43,9 +44,11 @@ export function NavbarDesktop(session: UserSession) {
         <Button>
           Search <Search />
         </Button>
-        <Button>
-          Cart <ShoppingCartIcon />
-        </Button>
+        <CartToPaymentWrapper>
+          <Button>
+            Cart <ShoppingCartIcon />
+          </Button>
+        </CartToPaymentWrapper>
         {session.isPending ? (
           <Skeleton className="h-9 w-24 bg-white/80" />
         ) : session.user ? (

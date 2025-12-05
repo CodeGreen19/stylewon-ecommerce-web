@@ -48,7 +48,7 @@ export default function DetailsBox({ product }: { product: Product }) {
         {/* Left: Image gallery */}
         <div className="space-y-4">
           {/* Main image */}
-          <div className="bg-muted aspect-square w-full overflow-hidden rounded-xl border border-cyan-600">
+          <div className="bg-muted aspect-square w-full overflow-hidden rounded-xl border">
             <Image
               src={selectedImage || product.images[0]}
               alt={item.name}
@@ -64,7 +64,7 @@ export default function DetailsBox({ product }: { product: Product }) {
               <div
                 key={img}
                 onClick={() => setSelectedImage(img)}
-                className="aspect-square w-20 flex-none overflow-hidden rounded-lg border border-cyan-800 transition hover:opacity-80"
+                className="aspect-square w-20 flex-none overflow-hidden rounded-lg border transition hover:opacity-80"
               >
                 <Image
                   src={img}
@@ -163,7 +163,7 @@ function QuantityAndAddtoCartBtn({ product }: { product: Product }) {
             <Plus />
           </Button>
         </div>
-        <div className="text-2xl font-bold text-cyan-200">
+        <div className="text-2xl font-bold">
           {Number(product.price)} &#x09F3;
         </div>
       </div>
