@@ -1,9 +1,12 @@
 import { create } from "zustand";
-
+type ImgType = {
+  url: string;
+  publicId: string;
+};
 type Store = {
-  images: string[];
-  addImage: (image: string) => void;
-  removeImage: (image: string) => void;
+  images: ImgType[];
+  addImage: (i: ImgType) => void;
+  removeImage: (publicId: string) => void;
   clearImages: () => void;
 };
 
@@ -15,9 +18,9 @@ export const useAddImage = create<Store>((set) => ({
       images: [...state.images, image],
     })),
 
-  removeImage: (image) =>
+  removeImage: (publicId) =>
     set((state) => ({
-      images: state.images.filter((img) => img !== image),
+      images: state.images.filter((img) => img.publicId !== publicId),
     })),
 
   clearImages: () => set({ images: [] }),

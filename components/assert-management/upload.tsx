@@ -18,21 +18,22 @@ const options = {
 type UploadType = {
   files: File[];
   setFiles: Dispatch<SetStateAction<File[]>>;
+  folderId: string;
 };
-export default function Upload({ files, setFiles }: UploadType) {
+export default function Upload({ files, setFiles, folderId }: UploadType) {
   const qc = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
       // 1️⃣ Compress all images in parallel
       const compressedFiles = await Promise.all(
-        files.map((file) => imageCompression(file, options))
+        files.map((file) => imageCompression(file, options)),
       );
 
       // 2️⃣ Prepare uploads in parallel
       const uploadPromises = compressedFiles.map(async (compressedFile) => {
         const formData = new FormData();
         formData.append("imageFile", compressedFile);
-        return uploadAssert(formData); // your server action
+        return uploadAssert({ formData, folderId }); // your server action
       });
 
       // 3️⃣ Wait for all server uploads to finish
@@ -42,7 +43,7 @@ export default function Upload({ files, setFiles }: UploadType) {
     },
     onSuccess: ({ message }) => {
       toast.success(message);
-      qc.invalidateQueries({ queryKey: ["asserts"] });
+      qc.invalidateQueries({ queryKey: ["asserts", folderId] });
     },
   });
   const getUrl = (f: File) => {
@@ -52,21 +53,21 @@ export default function Upload({ files, setFiles }: UploadType) {
   return (
     <Fragment>
       <div className="overflow-y-auto">
-        <div className=" space-y-0.5">
+        <div className="space-y-0.5">
           {files.map((file, index) => (
             <div
               key={index}
-              className="relative  rounded-sm overflow-hidden border"
+              className="relative overflow-hidden rounded-sm border"
             >
               <Image
                 key={getUrl(file)}
                 src={getUrl(file)}
                 height={500}
                 width={500}
-                className="w-full "
+                className="w-full"
                 alt="slected"
               />
-              <div className="flex gap-1 absolute top-1 right-1">
+              <div className="absolute top-1 right-1 flex gap-1">
                 <Button>
                   <Crop />
                 </Button>
@@ -84,7 +85,7 @@ export default function Upload({ files, setFiles }: UploadType) {
           ))}
         </div>
       </div>
-      <div className="space-y-2 ">
+      <div className="space-y-2">
         <Button
           onClick={() => setFiles([])}
           variant={"outline"}

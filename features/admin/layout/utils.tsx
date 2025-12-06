@@ -1,4 +1,12 @@
-import { Album, Cat, Inbox, List, LucideIcon } from "lucide-react";
+import {
+  Album,
+  Box,
+  Boxes,
+  Inbox,
+  List,
+  LucideIcon,
+  Network,
+} from "lucide-react";
 export type NavMainType = {
   title: string;
   lists: {
@@ -25,7 +33,7 @@ export const adminSidebarNavItems: NavMainType[] = [
     lists: [
       {
         title: "Products",
-        icon: List,
+        icon: Network,
         url: "/admin/catalog/products",
         subLists: [
           { title: "Add Product", url: "/admin/catalog/products/add-new" },
@@ -38,7 +46,7 @@ export const adminSidebarNavItems: NavMainType[] = [
       },
       {
         title: "Categories",
-        icon: Cat,
+        icon: Boxes,
         url: "/admin/catalog/categories",
       },
     ],

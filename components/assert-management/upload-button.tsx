@@ -16,7 +16,13 @@ import { Button } from "../ui/button";
 import ImageCropper from "./image-croper";
 import Upload from "./upload";
 
-export default function UploadButton({ className }: { className?: string }) {
+export function UploadButton({
+  className,
+  folderId,
+}: {
+  className?: string;
+  folderId: string;
+}) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [cropped, setCropped] = useState<Blob | null>(null);
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
@@ -29,11 +35,12 @@ export default function UploadButton({ className }: { className?: string }) {
     <Dialog onOpenChange={() => setSelectedFiles([])}>
       <DialogTrigger asChild>
         <Button className={cn("rounded-full", className)}>
-          Upload <Plus className="ml-2 h-4 w-4" />
+          <span className="hidden md:block">Upload</span>{" "}
+          <Plus className="ml-2 h-4 w-4" />
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-[96vw] lg:max-w-[40vw] h-[80vh]  flex flex-col">
+      <DialogContent className="flex h-[70vh] max-w-[96vw] flex-col p-4 lg:h-[80vh] lg:max-w-[40vw] lg:p-3">
         <DialogHeader>
           <DialogTitle className="text-start">
             Upload Image{" "}
@@ -45,17 +52,17 @@ export default function UploadButton({ className }: { className?: string }) {
           <div
             {...getRootProps()}
             className={cn(
-              "flex-1 rounded-md border-2 border-dashed flex items-center justify-center transition-all",
+              "flex flex-1 items-center justify-center rounded-md border-2 border-dashed transition-all",
               "bg-accent/40",
               isDragActive
                 ? "border-primary bg-primary/10"
-                : "border-muted-foreground/30"
+                : "border-muted-foreground/30",
             )}
           >
             <input {...getInputProps()} />
-            <div className="flex flex-col items-center gap-4 pointer-events-none">
+            <div className="pointer-events-none flex flex-col items-center gap-4">
               {isDragActive ? (
-                <h6 className="font-medium text-primary">
+                <h6 className="text-primary font-medium">
                   Drop your files here…
                 </h6>
               ) : (
@@ -65,7 +72,7 @@ export default function UploadButton({ className }: { className?: string }) {
                   <Button
                     onClick={open}
                     type="button"
-                    className="rounded-full pointer-events-auto gap-0"
+                    className="pointer-events-auto gap-0 rounded-full"
                   >
                     Upload from computer <FileUp className="ml-2 h-4 w-4" />
                   </Button>
@@ -75,7 +82,11 @@ export default function UploadButton({ className }: { className?: string }) {
           </div>
         ) : (
           // <ShowSelectedImages files={selectedFiles} /> //todo
-          <Upload files={selectedFiles} setFiles={setSelectedFiles} />
+          <Upload
+            folderId={folderId}
+            files={selectedFiles}
+            setFiles={setSelectedFiles}
+          />
         )}
       </DialogContent>
     </Dialog>
@@ -87,12 +98,12 @@ function ShowSelectedImages({ files }: { files: File[] }) {
   const [existedFiles, setExistedFiles] = useState<File[]>(files);
   return (
     <div>
-      <div className="flex gap-2 mb-4 overflow-x-auto">
+      <div className="mb-4 flex gap-2 overflow-x-auto">
         {existedFiles.map((file, i) => (
           <div
             onClick={() => setSelectedFile(file)}
             key={i}
-            className="border relative overflow-hidden rounded-md aspect-square "
+            className="relative aspect-square overflow-hidden rounded-md border"
           >
             <Image
               src={URL.createObjectURL(file)}
@@ -100,7 +111,7 @@ function ShowSelectedImages({ files }: { files: File[] }) {
               width={80}
               alt="selected"
             />
-            <X className="size-4 bg-primary text-secondary rounded-full absolute top-1 right-1 " />
+            <X className="bg-primary text-secondary absolute top-1 right-1 size-4 rounded-full" />
           </div>
         ))}
       </div>

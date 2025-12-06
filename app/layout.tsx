@@ -22,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={` ${lexend.variable} font-lexend antialiased`}>
+      <body
+        className={` ${lexend.variable} font-lexend dark font-normal antialiased`}
+      >
         <Providers>{children}</Providers>
         <Toaster closeButton />
       </body>

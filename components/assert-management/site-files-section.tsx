@@ -1,24 +1,33 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
-import { getAsserts } from "./server/queries";
-import { Skeleton } from "../ui/skeleton";
-import { Button } from "../ui/button";
-import { Crop, Trash } from "lucide-react";
-import { deleteAssert } from "./server/actions";
-import { LoadingSwap } from "../ui/loading-swap";
-import { useAddImage } from "./hooks/use-add-image";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
+import { Skeleton } from "../ui/skeleton";
+import { useAddImage } from "./hooks/use-add-image";
+import { getAsserts } from "./server/queries";
+import { UploadButton } from "./upload-button";
 
-export default function SiteFilesSection() {
+export function SiteFilesSection({
+  activeFolderId,
+}: {
+  activeFolderId: string;
+}) {
   const { isPending, data, error } = useQuery({
-    queryFn: () => getAsserts(),
-    queryKey: ["asserts"],
+    queryFn: () => getAsserts({ folderId: activeFolderId }),
+    queryKey: ["asserts", activeFolderId],
   });
+
+  if (!activeFolderId) {
+    return (
+      <div className="flex items-center justify-center p-6">
+        No folder is selected
+      </div>
+    );
+  }
   if (isPending) {
     return (
-      <div className="flex gap-2 p-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-[100px] w-[100px]" />
+      <div className="grid grid-cols-4 gap-1 p-1 lg:grid-cols-6">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <Skeleton key={i} className="aspect-square" />
         ))}
       </div>
     );
@@ -28,49 +37,36 @@ export default function SiteFilesSection() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-1 lg:grid-cols-4 xl:grid-cols-6 overflow-y-auto">
+    <div className="grid grid-cols-4 gap-1 overflow-y-auto p-1 xl:grid-cols-6">
       {data.map((item, i) => (
         <ImageCard key={i} publicId={item.publicId} url={item.secureUrl} />
       ))}
+      <div className="p-2">
+        <UploadButton folderId={activeFolderId} />
+      </div>
     </div>
   );
 }
 
 function ImageCard({ url, publicId }: { url: string; publicId: string }) {
   const { images, addImage, removeImage } = useAddImage();
-  const qc = useQueryClient();
-  const { isPending, mutate } = useMutation({
-    mutationFn: deleteAssert,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["asserts"] });
-    },
-  });
+
   return (
     <div
-      onClick={() => (images.includes(url) ? removeImage(url) : addImage(url))}
+      onClick={() =>
+        images.find((imgInfo) => imgInfo.publicId === publicId)
+          ? removeImage(publicId)
+          : addImage({ url, publicId })
+      }
       className={cn(
-        "flex-none p-1 border transition-all",
-        images.includes(url) && "scale-95 ring-2 ring-black/50 "
+        "border transition-all",
+        images.find((imgInfo) => imgInfo.publicId === publicId) && "ring",
       )}
     >
-      <div className="border aspect-square ">
+      <div className="">
         <Image src={url} height={400} width={400} alt="site-image" />
       </div>
-      <div className="flex gap-1 p-1">
-        <Button
-          disabled={isPending}
-          onClick={() => mutate(publicId)}
-          className="rounded-sm"
-          size={"sm"}
-        >
-          <LoadingSwap isLoading={isPending}>
-            <Trash />
-          </LoadingSwap>
-        </Button>
-        <Button className="rounded-sm" size={"sm"}>
-          <Crop />
-        </Button>
-      </div>
+      <div className="flex gap-1 p-1"></div>
     </div>
   );
 }
