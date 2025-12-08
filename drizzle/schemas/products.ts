@@ -2,8 +2,9 @@
 import { integer, numeric, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { createdAt, id, updatedAt } from "../helpers";
 import { relations } from "drizzle-orm";
-import { carts } from "./cart";
+import { carts } from "./carts";
 import { orderItems } from "./orders";
+import { categoriesWithProducts } from "./categories";
 
 export const products = pgTable("products", {
   id,
@@ -24,11 +25,12 @@ export const products = pgTable("products", {
   updatedAt,
 });
 
-export const productRelations = relations(products, ({ many, one }) => ({
+export const productRelations = relations(products, ({ many }) => ({
   sizes: many(productSizes),
   colors: many(productColors),
   carts: many(carts),
   orderItems: many(orderItems),
+  categoriesWithProducts: many(categoriesWithProducts),
 }));
 
 export const productSizes = pgTable("product_sizes", {

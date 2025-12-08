@@ -3,4 +3,5 @@ export * from "./schemas/asserts";
 export * from "./schemas/auth";
 export * from "./schemas/billings";
 export * from "./schemas/orders";
-export * from "./schemas/cart";
+export * from "./schemas/carts";
+export * from "./schemas/categories";

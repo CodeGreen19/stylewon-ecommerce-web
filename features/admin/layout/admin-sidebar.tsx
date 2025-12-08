@@ -63,7 +63,9 @@ export function AdminSidebar({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <AdminSidebarMenu />
+        <React.Suspense>
+          <AdminSidebarMenu />
+        </React.Suspense>
       </SidebarContent>
       <SidebarFooter>
         <AdminAccounts user={data.user} />

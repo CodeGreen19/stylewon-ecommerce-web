@@ -13,7 +13,7 @@ export type NavMainType = {
     title: string;
     url: string;
     icon: LucideIcon;
-    subLists?: { title: string; url: string }[];
+    subLists?: { title: string; url: string; type?: "static" | "dymamic" }[];
   }[];
 };
 
@@ -48,6 +48,13 @@ export const adminSidebarNavItems: NavMainType[] = [
         title: "Categories",
         icon: Boxes,
         url: "/admin/catalog/categories",
+        subLists: [
+          {
+            title: "Product-listings",
+            url: "/admin/catalog/categories",
+            type: "dymamic",
+          },
+        ],
       },
     ],
   },
@@ -88,8 +95,10 @@ export function useAdminBreadcrumb(
       }
 
       if (list.subLists?.length) {
-        const matchedSub = list.subLists.find(
-          (sub) => sub.url === exactPathname,
+        const matchedSub = list.subLists.find((sub) =>
+          sub.type === "dymamic"
+            ? exactPathname.startsWith(sub.url)
+            : sub.url === exactPathname,
         );
 
         if (matchedSub) {

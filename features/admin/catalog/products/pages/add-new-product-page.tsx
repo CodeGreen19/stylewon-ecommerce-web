@@ -14,6 +14,7 @@ import AddProductPricing from "../components/add-product-pricing";
 import AddProductStockAndShipping from "../components/add-product-stock-shipping";
 import { addProductSchema, AddProductSchemaType } from "../schemas";
 import { getQueryClient } from "@/tanstack-query/get-query-client";
+import { AddProductCateogry } from "../components/add-product-category";
 
 export default function AddNewProductPage() {
   const qc = getQueryClient();
@@ -43,7 +44,7 @@ export default function AddNewProductPage() {
   return (
     <form
       onSubmit={form.handleSubmit((v) => mutate(v))}
-      className="grid grid-cols-1 space-y-6 md:space-y-0 md:grid-cols-2 md:gap-6"
+      className="grid grid-cols-1 space-y-6 md:grid-cols-2 md:gap-6 md:space-y-0"
     >
       <FieldGroup>
         <AddProductImage form={form} />
@@ -52,6 +53,7 @@ export default function AddNewProductPage() {
       </FieldGroup>
       <FieldGroup>
         <AddProductOptions form={form} />
+        <AddProductCateogry />
         <AddProductStockAndShipping form={form} />
         <AddProdutActionBtns isPending={isPending} form={form} />
       </FieldGroup>

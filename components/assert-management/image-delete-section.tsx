@@ -10,7 +10,7 @@ import { deleteAssert } from "./server/actions";
 import { LoadingSwap } from "../ui/loading-swap";
 
 export function ImagesDeleteSection({ folderId }: { folderId: string }) {
-  const { images } = useAddImage();
+  const { images, clearImages } = useAddImage();
   const qc = getQueryClient();
   const { isPending, mutate } = useMutation({
     mutationFn: async () => {
@@ -18,6 +18,7 @@ export function ImagesDeleteSection({ folderId }: { folderId: string }) {
       await Promise.all(promises);
     },
     onSuccess: async () => {
+      clearImages();
       await qc.invalidateQueries({ queryKey: ["asserts", folderId] });
     },
   });

@@ -2,7 +2,7 @@ import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
 import { billingInfo } from "./billings";
 import { orders } from "./orders";
-import { carts } from "./cart";
+import { carts } from "./carts";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
