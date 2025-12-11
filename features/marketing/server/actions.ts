@@ -70,7 +70,6 @@ export async function placeOrder({ carts }: PlaceOrderType) {
     (prev, current) => prev + current.price * current.quantity,
     0,
   );
-  console.log("server", carts);
 
   // const [newOrder] = await db
   //   .insert(orders)

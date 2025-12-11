@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
-import { useCartItems } from "../../hooks/use-cart-items";
+import { useState } from "react";
+import { useGuestUserCart } from "../../hooks/use-guest-user-cart";
+import { cartActions } from "../../server/cart.action";
 import { CartType } from "../../types";
+import { getQueryClient } from "@/tanstack-query/get-query-client";
 
 export function CartItem({
   item,
@@ -11,37 +15,67 @@ export function CartItem({
   item: CartType;
   type: "db" | "local";
 }) {
-  const { guestUserUpdateQuantity, guestUserRemoveFromCart } = useCartItems();
-
+  const { guestUserUpdateItemQty, guestUserRemoveItem } = useGuestUserCart();
+  const qc = getQueryClient();
+  // mutation
+  const [pendingType, setPendingType] = useState<
+    "INCREASE_QUANTITY" | "REMOVE_FROM_CART" | "DECREASE_QUANTITY" | null
+  >(null);
+  const { mutate, isPending } = useMutation({
+    mutationFn: cartActions,
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ["user-cart"] });
+    },
+  });
   // utilities
   const cartAddQty = () => {
     if (type === "local") {
-      guestUserUpdateQuantity(item.productId, item.quantity + 1);
+      guestUserUpdateItemQty(item.productId, item.quantity + 1);
+    }
+    if (type === "db") {
+      if (item.id) {
+        setPendingType("INCREASE_QUANTITY");
+        mutate({ type: "INCREASE_QUANTITY", cartId: item.id });
+      }
     }
   };
   const cartRemoveQty = () => {
     if (type === "local") {
-      guestUserUpdateQuantity(
+      guestUserUpdateItemQty(
         item.productId,
         item.quantity > 1 ? item.quantity - 1 : 1,
       );
     }
+    if (item.id) {
+      setPendingType("DECREASE_QUANTITY");
+      mutate({ type: "DECREASE_QUANTITY", cartId: item.id });
+    }
   };
   const cartDelete = () => {
     if (type === "local") {
-      guestUserRemoveFromCart(item.productId);
+      guestUserRemoveItem(item.productId);
+    }
+    if (item.id) {
+      setPendingType("REMOVE_FROM_CART");
+      mutate({ type: "REMOVE_FROM_CART", cartId: item.id });
     }
   };
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
-      <div className="relative rounded-xl border border-cyan-500 p-4 shadow-sm">
+      <div className="relative rounded-xl border p-4 shadow-sm">
         <div className="space-y-3">
           <h3 className="truncate font-medium">{item.name}</h3>
           <div className="flex items-center gap-3">
             <div className="overflow-hidden rounded-sm">
               {item.imageUrl && (
-                <Image src={item.imageUrl} height={50} width={50} alt="order" />
+                <Image
+                  src={item.imageUrl}
+                  className="size-10 object-cover"
+                  height={50}
+                  width={50}
+                  alt="order"
+                />
               )}
             </div>
             <p className="text-base font-semibold">
@@ -51,16 +85,25 @@ export function CartItem({
         </div>
 
         <div className="flex items-center justify-between gap-3">
-          <div className="my-2 flex items-center">
-            <Button variant={"outline"} onClick={cartRemoveQty}>
+          <div className="my-2 flex items-center gap-0.5">
+            <Button
+              disabled={isPending && pendingType === "DECREASE_QUANTITY"}
+              variant={"outline"}
+              onClick={cartRemoveQty}
+            >
               <Minus />
             </Button>
             <Button variant={"outline"}>{item.quantity}</Button>
-            <Button variant={"outline"} onClick={cartAddQty}>
+            <Button
+              disabled={isPending && pendingType === "INCREASE_QUANTITY"}
+              variant={"outline"}
+              onClick={cartAddQty}
+            >
               <Plus />
             </Button>
           </div>
           <Button
+            disabled={isPending && pendingType === "REMOVE_FROM_CART"}
             variant={"outline"}
             onClick={cartDelete}
             className="rounded-full text-sm text-red-500"

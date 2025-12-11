@@ -22,26 +22,29 @@ export function AdminSidebarMenu() {
       return false;
     }
   };
-  return adminSidebarNavItems.map((item) => (
-    <SidebarGroup key={item.title} className="py-0">
-      <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-      <SidebarMenu className="">
-        {item.lists.map((list) => (
-          <SidebarMenuItem key={list.url}>
-            <Link href={list.url}>
-              <SidebarMenuButton
-                className={cn(
-                  "rounded-full px-2 py-5",
-                  selectedRoute(list.url) && "bg-sidebar-accent",
-                )}
-              >
-                <list.icon />
-                <span>{list.title}</span>
-              </SidebarMenuButton>
-            </Link>
-          </SidebarMenuItem>
-        ))}
-      </SidebarMenu>
-    </SidebarGroup>
-  ));
+  return adminSidebarNavItems.map(
+    (item) =>
+      !item.hide && (
+        <SidebarGroup key={item.title} className="py-0">
+          <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+          <SidebarMenu className="">
+            {item.lists.map((list) => (
+              <SidebarMenuItem key={list.url}>
+                <Link href={list.url}>
+                  <SidebarMenuButton
+                    className={cn(
+                      "rounded-full px-2 py-5",
+                      selectedRoute(list.url) && "bg-sidebar-accent",
+                    )}
+                  >
+                    <list.icon />
+                    <span>{list.title}</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      ),
+  );
 }

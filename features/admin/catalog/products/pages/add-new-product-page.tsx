@@ -38,6 +38,12 @@ export default function AddNewProductPage() {
     onSuccess: ({ message }) => {
       toast.success(message);
       qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({
+        queryKey: ["marketing-products"],
+      });
+      qc.invalidateQueries({
+        queryKey: ["marketing-product-details"],
+      });
       form.reset();
     },
   });

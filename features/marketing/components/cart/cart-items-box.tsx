@@ -2,47 +2,89 @@
 import { Button } from "@/components/ui/button";
 import { SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ChevronRight } from "lucide-react";
-import { Fragment } from "react";
-import { useCartItems } from "../../hooks/use-cart-items";
+import { Fragment, useState } from "react";
+import { CartType } from "../../types";
 import { CartItem } from "./cart-item";
-import { EmptyCartBox } from "./empty-cart-box";
+import { CartEmptyBox } from "./cart-empty-box";
+import { useRouter } from "next/navigation";
+import { useGuestUserCart } from "../../hooks/use-guest-user-cart";
+import { CompletedAuthBox } from "@/features/auth/components/completed-auth-box";
 export function CartItemsBox({
-  setOpenAuth,
+  carts,
+  type,
+  onClose,
 }: {
-  setOpenAuth?: (v: boolean) => void;
+  type: "local" | "db";
+  carts: CartType[];
+  onClose: () => void;
 }) {
-  const { carts } = useCartItems();
-
+  const [shouldAuthBoxOpen, setShouldAuthBoxOpen] = useState(false);
+  const router = useRouter();
+  // total amount
   const total =
     carts.length === 0
       ? 0
       : carts.reduce((prev, curr) => prev + curr.price * curr.quantity, 0);
 
-  return (
+  return shouldAuthBoxOpen ? (
+    <Fragment>
+      <SheetHeader className="hidden">
+        <SheetTitle className="text-destructive text-2xl"></SheetTitle>
+      </SheetHeader>
+      <AuthBox onClose={onClose} />
+    </Fragment>
+  ) : (
     <Fragment>
       <SheetHeader>
         <SheetTitle className="text-2xl">Shopping Carts</SheetTitle>
       </SheetHeader>
-      <div className="p-5 space-y-4">
+      <div className="space-y-1 p-5">
         {carts.length === 0 ? (
-          <EmptyCartBox />
+          <CartEmptyBox />
         ) : (
           carts.map((item) => (
-            <CartItem type="local" key={item.productId} item={item} />
+            <CartItem type={type} key={item.productId} item={item} />
           ))
         )}
       </div>
       <SheetFooter className="flex flex-row items-center justify-between">
-        <Button variant={"ghost"} className="py-6 text-2xl rounded-full ">
+        <Button variant={"ghost"} className="rounded-full py-6 text-2xl">
           Total : {total} &#x09F3;
         </Button>
         <Button
-          onClick={() => setOpenAuth && setOpenAuth(true)}
-          className="py-6  rounded-full w-32"
+          onClick={() =>
+            type === "local"
+              ? setShouldAuthBoxOpen(true)
+              : router.push("/checkout")
+          }
+          className="w-32 rounded-full py-6"
         >
           Proceed <ChevronRight />
         </Button>
       </SheetFooter>
     </Fragment>
+  );
+}
+
+function AuthBox({ onClose }: { onClose: () => void }) {
+  const router = useRouter();
+
+  const { guestUserCartItems } = useGuestUserCart();
+  return (
+    <div className="p-4 lg:p-6">
+      <SheetHeader>
+        <SheetTitle></SheetTitle>
+      </SheetHeader>
+      <CompletedAuthBox
+        onClose={() => {
+          if (guestUserCartItems.length !== 0) {
+            setTimeout(() => {
+              router.push(`?local-cart-count=${guestUserCartItems.length}`);
+            }, 500);
+          }
+          onClose();
+        }}
+      />
+    </div>
   );
 }

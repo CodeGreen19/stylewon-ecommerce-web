@@ -7,22 +7,16 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
-import { Minus, Plus } from "lucide-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { Fragment, useEffect } from "react";
-import { toast } from "sonner";
-import { addToCart } from "../../server/actions";
-import { useCartItems } from "../../hooks/use-cart-items";
+import { useEffect } from "react";
+import { useProductSelection } from "../../hooks/use-product-selection";
 import { productDetails } from "../../server/queries";
-import { CartType } from "../../types";
 import AdditionalInfo from "./additional-info";
-import { getQueryClient } from "@/tanstack-query/get-query-client";
+import { QtyAndAddToCart } from "./qty-and-add-to-cart";
 
-type Product = Awaited<ReturnType<typeof productDetails>>;
-export default function DetailsBox({ product }: { product: Product }) {
+export default function DetailsBox({ id }: { id: string }) {
   const {
     selectedImage,
     selectedColor,
@@ -31,7 +25,12 @@ export default function DetailsBox({ product }: { product: Product }) {
     setSelectedImage,
     setSelectedSize,
     setQuantity,
-  } = useCartItems();
+  } = useProductSelection();
+
+  const { data: product } = useSuspenseQuery({
+    queryKey: ["marketing-product-details", id],
+    queryFn: () => productDetails(id),
+  });
   const item = product; // since productDetails returns an array
   useEffect(() => {
     setSelectedImage(product.images[0]);
@@ -84,120 +83,54 @@ export default function DetailsBox({ product }: { product: Product }) {
             <h1 className="text-3xl font-semibold">{item.name}</h1>
           </div>
           <FieldGroup>
-            <Field>
-              <FieldLabel>Sizes</FieldLabel>
-              <FieldContent className="flex-row flex-wrap">
-                {item.sizes.map((size) => (
-                  <Button
-                    onClick={() => setSelectedSize(size.label)}
-                    className="flex-none"
-                    variant={
-                      selectedSize === size.label ? "default" : "outline"
-                    }
-                    key={size.id}
-                  >
-                    {size.label}
-                  </Button>
-                ))}
-              </FieldContent>
-            </Field>
-            <Field>
-              <FieldLabel>Colors</FieldLabel>
-              <FieldContent className="flex-row flex-wrap">
-                {item.colors.map((color) => (
-                  <Button
-                    onClick={() => setSelectedColor(color.label)}
-                    variant={
-                      selectedColor === color.label ? "default" : "outline"
-                    }
-                    className="flex-none"
-                    key={color.id}
-                  >
-                    <span
-                      style={{ background: `${color.hexColor ?? ""}` }}
-                      className={cn("inline-block size-3 rounded-full")}
-                    ></span>
-                    {color.label}
-                  </Button>
-                ))}
-              </FieldContent>
-            </Field>
+            {item.sizes.length !== 0 && (
+              <Field>
+                <FieldLabel>Sizes</FieldLabel>
+                <FieldContent className="flex-row flex-wrap">
+                  {item.sizes.map((size) => (
+                    <Button
+                      onClick={() => setSelectedSize(size.label)}
+                      className="flex-none"
+                      variant={
+                        selectedSize === size.label ? "default" : "outline"
+                      }
+                      key={size.id}
+                    >
+                      {size.label}
+                    </Button>
+                  ))}
+                </FieldContent>
+              </Field>
+            )}
+            {item.colors.length !== 0 && (
+              <Field>
+                <FieldLabel>Colors</FieldLabel>
+                <FieldContent className="flex-row flex-wrap">
+                  {item.colors.map((color) => (
+                    <Button
+                      onClick={() => setSelectedColor(color.label)}
+                      variant={
+                        selectedColor === color.label ? "default" : "outline"
+                      }
+                      className="flex-none"
+                      key={color.id}
+                    >
+                      <span
+                        style={{ background: `${color.hexColor ?? ""}` }}
+                        className={cn("inline-block size-3 rounded-full")}
+                      ></span>
+                      {color.label}
+                    </Button>
+                  ))}
+                </FieldContent>
+              </Field>
+            )}
           </FieldGroup>
 
-          <QuantityAndAddtoCartBtn product={product} />
+          <QtyAndAddToCart product={product} />
         </div>
       </div>
-      <AdditionalInfo des={product.description} />
+      <AdditionalInfo des={product.description || ""} />
     </section>
-  );
-}
-
-function QuantityAndAddtoCartBtn({ product }: { product: Product }) {
-  const { isPending, data } = authClient.useSession();
-  const qc = getQueryClient();
-  const {
-    guestUserAddToCart,
-    quantity,
-    setQuantity,
-    selectedColor,
-    selectedImage,
-    selectedSize,
-  } = useCartItems();
-
-  const m_AddToCart = useMutation({
-    mutationFn: addToCart,
-    onSuccess: async () => {
-      toast.success("Added to cart.");
-      await qc.invalidateQueries({ queryKey: ["login-user-carts"] });
-    },
-  });
-  return (
-    <Fragment>
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-1">
-          <Button onClick={() => quantity > 1 && setQuantity(quantity - 1)}>
-            <Minus />
-          </Button>
-          <Button>{quantity}</Button>
-          <Button onClick={() => setQuantity(quantity + 1)}>
-            <Plus />
-          </Button>
-        </div>
-        <div className="text-2xl font-bold">
-          {Number(product.price)} &#x09F3;
-        </div>
-      </div>
-
-      <Button
-        disabled={m_AddToCart.isPending}
-        onClick={() => {
-          if (isPending) {
-            return toast.info("Wait a while");
-          }
-
-          if (!selectedColor || !selectedSize) {
-            return toast.info("Color & Size selection is required");
-          }
-          const info: CartType = {
-            name: product.name,
-            price: Number(product.price),
-            productId: product.id,
-            quantity,
-            color: selectedColor,
-            imageUrl: selectedImage,
-            size: selectedSize,
-          };
-          if (data) {
-            m_AddToCart.mutate(info);
-          } else {
-            guestUserAddToCart(info);
-            toast.success("Added to cart.");
-          }
-        }}
-        className="w-full rounded-full py-6"
-      >
-        Add to Cart
-      </Button>
-    </Fragment>
   );
 }

@@ -35,10 +35,7 @@ export function ProductDetailsUI({
       {/* Images */}
       <div className="flex gap-2 overflow-x-auto pb-2">
         {data.images.map((img, i) => (
-          <div
-            key={i}
-            className="bg-muted h-[80px] min-w-[80px] overflow-hidden rounded-lg"
-          >
+          <div key={i} className="bg-muted size-20 overflow-hidden rounded-lg">
             <Image
               src={img}
               alt={data.name}

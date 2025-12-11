@@ -21,6 +21,7 @@ import { CompletedAuthBox } from "@/features/auth/components/completed-auth-box"
 import { useIsMobile } from "@/hooks/use-mobile";
 import { User as UserType } from "better-auth";
 import {
+  ContainerIcon,
   ListChecks,
   Loader2,
   Menu,
@@ -30,7 +31,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import CartToPaymentWrapper from "../components/cart/cart-to-payment-wrapper";
+import { CartWrapper } from "../components/cart/cart-wrapper";
+import { useGuestUserCart } from "../hooks/use-guest-user-cart";
+import { useRouter } from "next/navigation";
 
 type UserSession = {
   isPending: boolean;
@@ -39,20 +42,23 @@ type UserSession = {
 type DrawarComponnentType = "CATEGORY" | "USER" | "SEARCH";
 export function NavbarMobile(session: UserSession) {
   const isMobile = useIsMobile();
+  const router = useRouter();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedDrawerType, setSelectedDrawerType] =
     useState<DrawarComponnentType>("CATEGORY");
+
+  const { guestUserCartItems } = useGuestUserCart();
   return (
     <div className="flex items-center justify-between">
       <section>
         <Logo />
       </section>
       <section className="flex items-center gap-1 md:hidden">
-        <CartToPaymentWrapper>
+        <CartWrapper>
           <Button>
             Cart <ShoppingCartIcon />
           </Button>
-        </CartToPaymentWrapper>
+        </CartWrapper>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button>
@@ -62,6 +68,12 @@ export function NavbarMobile(session: UserSession) {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Menu</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <Link href={"/products"}>
+              <DropdownMenuItem>
+                <ContainerIcon />
+                Products
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem
               onClick={() => {
                 setOpenDrawer(true);
@@ -114,7 +126,18 @@ export function NavbarMobile(session: UserSession) {
             ) : selectedDrawerType == "SEARCH" ? (
               <div>search</div>
             ) : (
-              <CompletedAuthBox onClose={() => setOpenDrawer(false)} />
+              <CompletedAuthBox
+                onClose={() => {
+                  if (guestUserCartItems.length !== 0) {
+                    setTimeout(() => {
+                      router.push(
+                        `?local-cart-count=${guestUserCartItems.length}`,
+                      );
+                    }, 500);
+                    setOpenDrawer(false);
+                  }
+                }}
+              />
             )}
           </div>
         </DrawerContent>

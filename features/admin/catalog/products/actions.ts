@@ -8,7 +8,6 @@ import { eq } from "drizzle-orm";
 export async function addProduct(info: AddProductSchemaType) {
   const { success } = addProductSchema.safeParse(info);
   if (!success) {
-    console.log("invalid data");
     return { error: "invalid data" };
   }
   //insert product
@@ -45,7 +44,6 @@ export async function updateProduct({
 }) {
   const { success } = addProductSchema.safeParse(info);
   if (!success) {
-    console.log("invalid data");
     return { error: "invalid data" };
   }
   //insert product

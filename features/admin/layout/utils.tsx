@@ -6,9 +6,11 @@ import {
   List,
   LucideIcon,
   Network,
+  User,
 } from "lucide-react";
 export type NavMainType = {
   title: string;
+  hide?: boolean;
   lists: {
     title: string;
     url: string;
@@ -70,6 +72,17 @@ export const adminSidebarNavItems: NavMainType[] = [
         title: "Orders",
         icon: List,
         url: "/admin/sales/orders",
+      },
+    ],
+  },
+  {
+    title: "Account",
+    hide: true,
+    lists: [
+      {
+        title: "Profile",
+        icon: User,
+        url: "/admin/account/profile",
       },
     ],
   },

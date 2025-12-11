@@ -1,5 +1,3 @@
-"use client";
-
 import { AdminSidebar } from "@/features/admin/layout/admin-sidebar";
 
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";

@@ -1,6 +1,4 @@
-"use client";
-
-import { LifeBuoy, Send, SquareDashedBottomCode } from "lucide-react";
+import { SquareDashedBottomCode } from "lucide-react";
 import * as React from "react";
 
 import {
@@ -14,27 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import { AdminAccounts } from "@/features/admin/layout/admin-accounts";
 import { AdminSidebarMenu } from "@/features/admin/layout/admin-sidebar-menu";
-
-const data = {
-  user: {
-    name: "Ahmed",
-    email: "ahmed@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [{}],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-};
+import { authClient } from "@/lib/auth-client";
 
 export function AdminSidebar({
   ...props
@@ -53,9 +31,7 @@ export function AdminSidebar({
                   <span className="truncate text-xl leading-6 font-bold">
                     Admin Panel
                   </span>
-                  <span className="truncate text-xs leading-tight">
-                    Manager
-                  </span>
+                  <ShowRole />
                 </div>
               </div>
             </SidebarMenuButton>
@@ -68,8 +44,12 @@ export function AdminSidebar({
         </React.Suspense>
       </SidebarContent>
       <SidebarFooter>
-        <AdminAccounts user={data.user} />
+        <AdminAccounts />
       </SidebarFooter>
     </Sidebar>
   );
+}
+
+async function ShowRole() {
+  return <span className="truncate text-xs leading-tight">Manager</span>;
 }

@@ -1,7 +1,5 @@
 import Logo from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
-import { User as UserType } from "better-auth";
-import { ChevronDown, Search, ShoppingCartIcon, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,9 +8,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AuthDialogWrapper } from "@/features/auth/components/auth-dialog-wrapper";
-import Link from "next/link";
 import { useIsMobile } from "@/hooks/use-mobile";
-import CartToPaymentWrapper from "../components/cart/cart-to-payment-wrapper";
+import { User as UserType } from "better-auth";
+import { ChevronDown, Search, ShoppingCartIcon, User } from "lucide-react";
+import Link from "next/link";
+import { CartWrapper } from "../components/cart/cart-wrapper";
 type UserSession = {
   isPending: boolean;
   user: UserType | undefined;
@@ -38,17 +38,20 @@ export function NavbarDesktop(session: UserSession) {
             <DropdownMenuItem>Subscription</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button variant={"ghost"}>Products</Button>
+        <Link href={"/products"}>
+          {" "}
+          <Button variant={"ghost"}>Products</Button>
+        </Link>
       </section>
       <section className="flex items-center justify-center gap-1">
         <Button>
           Search <Search />
         </Button>
-        <CartToPaymentWrapper>
+        <CartWrapper>
           <Button>
             Cart <ShoppingCartIcon />
           </Button>
-        </CartToPaymentWrapper>
+        </CartWrapper>
         {session.isPending ? (
           <Skeleton className="h-9 w-24 bg-white/80" />
         ) : session.user ? (

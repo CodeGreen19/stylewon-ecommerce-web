@@ -11,16 +11,22 @@ import { productDetails } from "../server/queries";
 
 export default async function ProductDetailsPage({ slug }: { slug: string }) {
   const qc = getQueryClient();
-  qc.prefetchQuery({
+  void qc.prefetchQuery({
+    queryKey: ["marketing-product-details", slug],
+    queryFn: () => productDetails(slug),
+  });
+  void qc.prefetchQuery({
     queryKey: ["related-products"],
     queryFn: () => relatedProducts(),
   });
-  const product = await productDetails(slug);
   return (
     <div>
-      <DetailsBox product={product} />
-
       <HydrationBoundary state={dehydrate(qc)}>
+        <ErrorBoundary fallback={<Error />}>
+          <Suspense fallback={<Loading />}>
+            <DetailsBox id={slug} />
+          </Suspense>
+        </ErrorBoundary>
         <ErrorBoundary fallback={<Error />}>
           <Suspense fallback={<Loading />}>
             <RelatedProducts />

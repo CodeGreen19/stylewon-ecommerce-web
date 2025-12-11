@@ -40,6 +40,12 @@ export function UpdateProductForm({
 
       await qc.invalidateQueries({ queryKey: ["single-product", productId] });
       qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({
+        queryKey: ["marketing-products"],
+      });
+      qc.invalidateQueries({
+        queryKey: ["marketing-product-details"],
+      });
       router.refresh();
     },
   });

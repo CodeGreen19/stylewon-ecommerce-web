@@ -3,6 +3,8 @@
 import { authClient } from "@/lib/auth-client";
 import { NavbarDesktop } from "./navbar-desktop";
 import { NavbarMobile } from "./navbar-mobile";
+import { CartSaveDbIfExistDilaog } from "../components/cart/cart-save-db-if-exist-dialog";
+import { Suspense } from "react";
 export default function Navbar() {
   const { data, isPending } = authClient.useSession();
   return (
@@ -15,6 +17,9 @@ export default function Navbar() {
           <NavbarDesktop user={data?.user} isPending={isPending} />
         </div>
       </div>
+      <Suspense>
+        <CartSaveDbIfExistDilaog />
+      </Suspense>
     </div>
   );
 }
