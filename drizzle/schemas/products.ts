@@ -8,19 +8,17 @@ import { categoriesWithProducts } from "./categories";
 
 export const products = pgTable("products", {
   id,
-
-  name: text("name").notNull(), // 5–255 chars (handled by Zod)
-  description: text("description").notNull(),
-
-  price: numeric("price").notNull(), // stored as numeric
-  costOfGoods: numeric("cost_of_goods"), // optional
-  profit: numeric("profit").notNull(),
-  margin: numeric("margin").notNull(),
-
-  images: text("images").array().notNull(), // text[]
-
-  stocks: integer("stocks").notNull(), // max 10000
-  shippingWeight: numeric("shipping_weight").notNull(),
+  //required
+  name: text("name").notNull(),
+  images: text("images").array().notNull(),
+  price: numeric("price").notNull(),
+  //optional
+  description: text("description"),
+  profit: numeric("profit"),
+  margin: numeric("margin"),
+  stocks: numeric("stocks"),
+  costOfGoods: numeric("cost_of_goods"),
+  shippingWeight: numeric("shipping_weight"),
   createdAt,
   updatedAt,
 });

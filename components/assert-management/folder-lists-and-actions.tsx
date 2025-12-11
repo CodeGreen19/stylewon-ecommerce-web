@@ -85,7 +85,12 @@ function FolderActionButton({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant={"ghost"} size={"icon-sm"} className="rounded-none">
+        <Button
+          type="button"
+          variant={"ghost"}
+          size={"icon-sm"}
+          className="rounded-none"
+        >
           <MoreVertical />
         </Button>
       </PopoverTrigger>
@@ -249,7 +254,6 @@ function FolderNameUpdateForm({
 
 function DeleteFolderButton({
   folderId,
-  onClose,
 }: {
   folderId: string;
   onClose: () => void;
@@ -277,7 +281,7 @@ function DeleteFolderButton({
     >
       <LoadingSwap isLoading={isPending}>
         <Trash />
-      </LoadingSwap>{" "}
+      </LoadingSwap>
       Delete this folder
     </Button>
   );

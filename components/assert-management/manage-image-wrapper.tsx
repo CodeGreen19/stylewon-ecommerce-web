@@ -8,7 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { FolderCreateButton, FolderLists } from "./folder-lists-and-actions";
@@ -26,7 +25,6 @@ export function ManageImageWrapper({
   children: React.ReactNode;
   onSetImages: (images: string[]) => void;
 }) {
-  const isMobile = useIsMobile();
   const { images, clearImages } = useAddImage();
   const [activeFolderId, setActiveFolderId] = useState<string>("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -41,6 +39,7 @@ export function ManageImageWrapper({
             {images.length !== 0 && (
               <div className="absolute top-10 right-4 lg:right-4">
                 <Button
+                  type="button"
                   onClick={() => {
                     onSetImages(images.map((image) => image.url));
                     setOpenDialog(false);

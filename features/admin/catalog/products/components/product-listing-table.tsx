@@ -6,6 +6,9 @@ import { Fragment, use } from "react";
 import DataTableActionDropdown from "@/components/table/data-table-action-dropdown";
 import { getProducts } from "../queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import Image from "next/image";
+import { SingleProductDetailsInfo } from "./single-product-details-info";
+import { DeleteProduct } from "./delete-product";
 
 export default function ProductListingTable() {
   const { data: allCourses } = useSuspenseQuery({
@@ -16,35 +19,42 @@ export default function ProductListingTable() {
   const columns: ColumnDef<Awaited<ReturnType<typeof getProducts>>[number]>[] =
     [
       {
+        header: "Image",
+        cell: ({ row }) => {
+          return (
+            <Image
+              src={row.original.images[0] ?? ""}
+              height={50}
+              width={50}
+              className="size-10 rounded-md object-cover"
+              alt="product_image"
+            />
+          );
+        },
+      },
+      {
         accessorKey: "name",
         header: "Name",
       },
-      {
-        accessorKey: "costOfGoods",
-        header: "Costs of good",
-      },
+
       {
         accessorKey: "price",
         header: "Price",
       },
       {
-        accessorKey: "stocks",
-        header: "Stocks",
-      },
-      {
         id: "actions",
-        cell: () => (
+        cell: ({ row }) => (
           <DataTableActionDropdown
             items={[
               {
                 dropdownItem: (
                   <Fragment>
-                    <Edit /> Edit Course
+                    <Edit /> Edit Product
                   </Fragment>
                 ),
                 access: {
-                  show: "sheet",
-                  component: <div>Edit</div>,
+                  show: "link",
+                  link: `/admin/catalog/products/${row.original.id}/update`,
                 },
               },
               {
@@ -54,8 +64,10 @@ export default function ProductListingTable() {
                   </Fragment>
                 ),
                 access: {
-                  show: "link",
-                  link: "/admin/status/overviews",
+                  show: "sheet",
+                  component: (
+                    <SingleProductDetailsInfo productId={row.original.id} />
+                  ),
                 },
               },
               {
@@ -66,7 +78,7 @@ export default function ProductListingTable() {
                 ),
                 access: {
                   show: "dialog",
-                  component: <div>delete</div>,
+                  component: <DeleteProduct productId={row.original.id} />,
                 },
               },
             ]}

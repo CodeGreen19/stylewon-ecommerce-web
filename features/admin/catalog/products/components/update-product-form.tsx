@@ -1,50 +1,52 @@
 "use client";
 
 import { FieldGroup } from "@/components/ui/field";
+import { getQueryClient } from "@/tanstack-query/get-query-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { addProduct } from "../actions";
-import AddProdutActionBtns from "../components/add-product-action-btns";
-import AddProductBasicInfo from "../components/add-product-basic-info";
-import AddProductImage from "../components/add-product-images";
-import AddProductOptions from "../components/add-product-options";
-import AddProductPricing from "../components/add-product-pricing";
-import AddProductStockAndShipping from "../components/add-product-stock-shipping";
+import { updateProduct } from "../actions";
 import { addProductSchema, AddProductSchemaType } from "../schemas";
-import { getQueryClient } from "@/tanstack-query/get-query-client";
-import { AddProductCateogry } from "../components/add-product-category";
+import AddProdutActionBtns from "./add-product-action-btns";
+import AddProductBasicInfo from "./add-product-basic-info";
+import { AddProductCateogry } from "./add-product-category";
+import AddProductImage from "./add-product-images";
+import AddProductOptions from "./add-product-options";
+import AddProductPricing from "./add-product-pricing";
+import AddProductStockAndShipping from "./add-product-stock-shipping";
+import { useRouter } from "next/navigation";
 
-export default function AddNewProductPage() {
+export function UpdateProductForm({
+  info,
+  productId,
+}: {
+  info: AddProductSchemaType;
+  productId: string;
+}) {
+  const router = useRouter();
   const qc = getQueryClient();
   const form = useForm<AddProductSchemaType>({
     resolver: zodResolver(addProductSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      costOfGoods: "",
-      price: "",
-      images: [],
-      margin: "",
-      profit: "",
-      shippingWeight: "",
-      stocks: "",
+      ...info,
     },
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: addProduct,
-    onSuccess: ({ message }) => {
+    mutationFn: updateProduct,
+    onSuccess: async ({ message }) => {
       toast.success(message);
+
+      await qc.invalidateQueries({ queryKey: ["single-product", productId] });
       qc.invalidateQueries({ queryKey: ["products"] });
-      form.reset();
+      router.refresh();
     },
   });
 
   return (
     <form
-      onSubmit={form.handleSubmit((v) => mutate(v))}
+      onSubmit={form.handleSubmit((v) => mutate({ info: v, productId }))}
       className="grid grid-cols-1 space-y-6 md:grid-cols-2 md:gap-6 md:space-y-0"
     >
       <FieldGroup>

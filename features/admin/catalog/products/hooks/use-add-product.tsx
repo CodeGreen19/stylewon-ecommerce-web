@@ -23,9 +23,31 @@ export const useSizeColorOptions = create<SizeColorOptions>()((set) => ({
   setColors: (colors) =>
     set(() => {
       const editedColors = colors.map((color) =>
-        color.hexColor ? color : { ...color, hexColor: "#000000" }
+        color.hexColor ? color : { ...color, hexColor: "#000000" },
       );
       return { colors: editedColors };
     }),
   setSizes: (options) => set({ sizes: options }),
+}));
+
+type CategorySelectionType = {
+  checkedCategoryIds: string[];
+
+  setCheckedCategoryIds: (id: string) => void;
+};
+
+export const useCategorySelection = create<CategorySelectionType>()((set) => ({
+  checkedCategoryIds: [],
+
+  setCheckedCategoryIds: (id) =>
+    set((exist) => {
+      let categoryIds = [...exist.checkedCategoryIds];
+      const index = categoryIds.indexOf(id);
+      if (index === -1) {
+        categoryIds.push(id);
+      } else {
+        categoryIds = categoryIds.filter((existedId) => existedId !== id);
+      }
+      return { checkedCategoryIds: categoryIds };
+    }),
 }));

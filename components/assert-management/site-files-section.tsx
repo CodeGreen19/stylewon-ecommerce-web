@@ -14,6 +14,7 @@ export function SiteFilesSection({
   const { isPending, data, error } = useQuery({
     queryFn: () => getAsserts({ folderId: activeFolderId }),
     queryKey: ["asserts", activeFolderId],
+    enabled: !!activeFolderId,
   });
 
   if (!activeFolderId) {

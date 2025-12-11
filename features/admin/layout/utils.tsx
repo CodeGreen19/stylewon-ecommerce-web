@@ -37,6 +37,11 @@ export const adminSidebarNavItems: NavMainType[] = [
         url: "/admin/catalog/products",
         subLists: [
           { title: "Add Product", url: "/admin/catalog/products/add-new" },
+          {
+            title: "Update product",
+            url: "/admin/catalog/products",
+            type: "dymamic",
+          },
         ],
       },
       {
