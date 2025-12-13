@@ -1,13 +1,29 @@
 import { z } from "zod";
 
-export const billingSchema = z.object({
-  fullName: z.string().min(1, "Required"),
+export const billingInfoSchema = z.object({
+  fullName: z
+    .string()
+    .min(3, "Full name must be at least 3 characters")
+    .max(255, "Full name cannot exceed 255 characters"),
+
   phone: z
     .string()
-    .min(11, "Invalid phone number")
-    .max(11, "Invalid phone number"),
+    .min(6, "Phone number must be at least 6 digits")
+    .max(20, "Phone number cannot exceed 20 digits")
+    .regex(/^[0-9+\-\s]+$/, "Invalid phone number format"),
 
-  address: z.string().min(1, "Address is required"),
+  districtId: z.string().min(2, "District is required"),
+
+  upazilaId: z.string().min(2, "Area is required"),
+
+  address: z.string().min(5, "Address is too short"),
+
+  email: z
+    .email("Invalid email format")
+    .optional()
+    .or(z.literal("").optional()),
+
+  note: z.string().optional(),
 });
 
-export type BillingSchemaType = z.infer<typeof billingSchema>;
+export type BillingSchemaType = z.infer<typeof billingInfoSchema>;

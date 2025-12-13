@@ -52,11 +52,16 @@ export function CartItemsBox({
           Total : {total} &#x09F3;
         </Button>
         <Button
-          onClick={() =>
-            type === "local"
-              ? setShouldAuthBoxOpen(true)
-              : router.push("/checkout")
-          }
+          onClick={() => {
+            if (type === "local") {
+              setShouldAuthBoxOpen(true);
+            } else {
+              if (total !== 0) {
+                router.push("/checkout");
+              }
+              onClose();
+            }
+          }}
           className="w-32 rounded-full py-6"
         >
           Proceed <ChevronRight />

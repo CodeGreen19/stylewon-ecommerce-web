@@ -5,8 +5,13 @@ import { user } from "./auth";
 import { products } from "./products";
 
 export const orders = pgTable("orders", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: text("user_id").notNull(),
+  id,
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  paymentMethod: text("payment_method").notNull(),
+  deleveryArea: text("delevery_area").notNull(),
+  deleveryAmount: text("delevery_amount").notNull(),
   totalAmount: integer("total_amount").notNull(),
   status: varchar("status", { length: 50 })
     .notNull()
@@ -19,7 +24,7 @@ export const orderItems = pgTable("order_items", {
   id,
   name: text("name").notNull(),
   orderId: uuid("order_id")
-    .references(() => products.id)
+    .references(() => orders.id)
     .notNull(),
   productId: uuid("product_id")
     .references(() => products.id)

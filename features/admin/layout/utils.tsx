@@ -1,7 +1,9 @@
 import {
   Album,
+  AlbumIcon,
   Box,
   Boxes,
+  DiscAlbum,
   Inbox,
   List,
   LucideIcon,
@@ -62,6 +64,11 @@ export const adminSidebarNavItems: NavMainType[] = [
             type: "dymamic",
           },
         ],
+      },
+      {
+        title: "Console",
+        icon: AlbumIcon,
+        url: "/admin/catalog/console",
       },
     ],
   },

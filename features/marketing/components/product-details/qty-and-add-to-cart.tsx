@@ -9,10 +9,11 @@ import { Minus, Plus } from "lucide-react";
 import { Fragment, useState } from "react";
 import { toast } from "sonner";
 import { useGuestUserCart } from "../../hooks/use-guest-user-cart";
-import { addToCart } from "../../server/actions";
+
 import { productDetails } from "../../server/queries";
 import { CartType } from "../../types";
 import { useProductSelection } from "../../hooks/use-product-selection";
+import { addToCart } from "../../server/cart.action";
 
 export function QtyAndAddToCart({
   product,

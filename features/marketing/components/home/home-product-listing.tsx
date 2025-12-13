@@ -32,7 +32,7 @@ function Products() {
     <div className="grid grid-cols-2 gap-1 md:grid-cols-4 lg:gap-4">
       {products.map((p) => (
         <ProductCard
-          stock={p.stocks}
+          stocks={p.stocks}
           key={p.id}
           name={p.name}
           price={p.price}

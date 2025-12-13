@@ -5,3 +5,4 @@ export * from "./schemas/billings";
 export * from "./schemas/orders";
 export * from "./schemas/carts";
 export * from "./schemas/categories";
+export * from "./schemas/delivery";

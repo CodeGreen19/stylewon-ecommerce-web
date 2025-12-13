@@ -9,7 +9,7 @@ type ProductCardProps = {
   price: string;
   images: string[];
   id: string;
-  stock: string | null;
+  stocks: string | null;
 };
 
 export function ProductCard({
@@ -17,7 +17,7 @@ export function ProductCard({
   price,
   images,
   id,
-  stock,
+  stocks,
 }: ProductCardProps) {
   return (
     <Link href={`/product/${id}`}>
@@ -33,7 +33,7 @@ export function ProductCard({
         <div className="relative flex flex-col space-y-1 p-2">
           <span className="text-sm font-medium">{name}</span>
           <span className="text-base font-semibold">{price} taka</span>
-          {Number(stock) === 0 && (
+          {Number(stocks) === 0 && (
             <Badge
               variant={"outline"}
               className="text-destructive absolute right-2 bottom-3"
