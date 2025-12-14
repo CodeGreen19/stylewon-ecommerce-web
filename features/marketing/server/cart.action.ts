@@ -7,6 +7,7 @@ import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+//-------------------------cart items-------------------//
 export async function getCartItems({ userId }: { userId: string | undefined }) {
   if (!userId) return;
   const allCarts = await db
@@ -16,6 +17,7 @@ export async function getCartItems({ userId }: { userId: string | undefined }) {
   return allCarts;
 }
 
+//-----------------------add to cart-------------------//
 export async function addToCart(
   inputs: Omit<typeof carts.$inferInsert, "userId">,
 ) {
@@ -33,12 +35,16 @@ export async function addToCart(
     if (inputs.quantity === isCartExisted.quantity) {
       return { info: "This item already added to cart" };
     }
+
+    //...............if exist so update................
     await db
       .update(carts)
       .set({ quantity: inputs.quantity })
       .where(whereEqality);
     return { message: "Quantity updated" };
   }
+
+  //............otherwise insert new..................
   await db.insert(carts).values({ ...inputs, userId: account.user.id });
   return { message: "Product added to cart" };
 }

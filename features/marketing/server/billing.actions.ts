@@ -4,13 +4,11 @@ import { db } from "@/drizzle/db";
 import { carts, defaultDeliveryCharge } from "@/drizzle/schema";
 import { billingInfo } from "@/drizzle/schemas/billings";
 import { auth } from "@/lib/auth";
+import { generateNumericOTP } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { BillingSchemaType } from "../schemas";
-import { CartType } from "../types";
-import { generateNumericOTP } from "@/lib/utils";
-import { account } from "@/auth-schema";
 
 type BillingInfoType = Omit<
   typeof billingInfo.$inferSelect,
@@ -105,7 +103,7 @@ export async function getOrderSummery() {
     .from(carts)
     .where(eq(carts.userId, account.user.id));
   const totalAcount = cartsInfo.reduce(
-    (prev, current) => prev + current.price,
+    (prev, current) => prev + current.price * current.quantity,
     0,
   );
   return { cartsInfo, totalAcount };
