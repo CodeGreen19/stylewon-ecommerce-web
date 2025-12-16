@@ -1,36 +1,42 @@
 "use client";
 
-import { Suspense, use } from "react";
-import { getProducts } from "../../server/queries";
-import { Heading } from "../shared/heading";
-import { ProductCard } from "../shared/product-card";
-import { ErrorBoundary } from "react-error-boundary";
 import Error from "@/components/shared/error";
 import Loading from "@/components/shared/loading";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { getMarketingProducts } from "../../server/queries";
+import { ProductCard, ProductCardsSkeleton } from "../shared/product-card";
+import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export function HomeProductListing() {
   return (
-    <div className="m-auto mt-10 max-w-5xl px-2 xl:px-0">
-      <Heading>Trending</Heading>
+    <div className="m-auto max-w-5xl px-2 md:mt-4 xl:px-0">
       <ErrorBoundary fallback={<Error />}>
-        <Suspense fallback={<Loading />}>
+        <Suspense fallback={<ProductCardsSkeleton />}>
           <Products />
         </Suspense>
       </ErrorBoundary>
+      <Link href={"/products"}>
+        <Button className="mt-2 w-full" variant={"secondary"}>
+          View all products <ChevronRight />
+        </Button>
+      </Link>
     </div>
   );
 }
 
 function Products() {
-  const { data: products } = useSuspenseQuery({
+  const { data } = useSuspenseQuery({
     queryKey: ["marketing-products"],
-    queryFn: () => getProducts(),
+    queryFn: () => getMarketingProducts(),
   });
 
   return (
-    <div className="grid grid-cols-2 gap-1 md:grid-cols-4 lg:gap-4">
-      {products.map((p) => (
+    <div className="grid grid-cols-2 gap-1 md:grid-cols-4 md:gap-4">
+      {data.map(({ product: p }) => (
         <ProductCard
           stocks={p.stocks}
           key={p.id}

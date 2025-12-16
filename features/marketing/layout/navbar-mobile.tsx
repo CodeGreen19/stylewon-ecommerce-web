@@ -54,6 +54,11 @@ export function NavbarMobile(session: UserSession) {
         <Logo />
       </section>
       <section className="flex items-center gap-1 md:hidden">
+        <Link href={"/products"}>
+          <Button>
+            <Search />
+          </Button>
+        </Link>
         <CartWrapper>
           <Button>
             Cart <ShoppingCartIcon />

@@ -50,7 +50,7 @@ export function DeliveryCharge({
   });
 
   return (
-    <Card className="max-w-lg">
+    <Card>
       <CardHeader className="space-y-1">
         <CardTitle className="text-base">
           Delivery Charge Configuration
@@ -60,7 +60,7 @@ export function DeliveryCharge({
         </p>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="w-full">
         <form
           onSubmit={form.handleSubmit((data) => mutation.mutate(data))}
           className="space-y-6"

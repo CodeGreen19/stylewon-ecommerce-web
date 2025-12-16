@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/sidebar";
 import { AdminAccounts } from "@/features/admin/layout/admin-accounts";
 import { AdminSidebarMenu } from "@/features/admin/layout/admin-sidebar-menu";
-import { authClient } from "@/lib/auth-client";
 
 export function AdminSidebar({
   ...props
@@ -24,7 +23,7 @@ export function AdminSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <div>
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-10 items-center justify-center rounded-sm">
+                <div className="text-sidebar-primary-foreground flex aspect-square size-10 items-center justify-center rounded-sm bg-emerald-900">
                   <SquareDashedBottomCode className="size-6" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">

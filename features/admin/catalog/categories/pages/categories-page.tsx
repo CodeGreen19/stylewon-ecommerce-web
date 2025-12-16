@@ -1,5 +1,4 @@
-"use cache";
-
+"use cache: private";
 import Error from "@/components/shared/error";
 import Loading from "@/components/shared/loading";
 import { getQueryClient } from "@/tanstack-query/get-query-client";

@@ -28,3 +28,11 @@ export const assertsRelations = relations(asserts, ({ one }) => ({
     references: [assertFolders.id],
   }),
 }));
+
+export const banners = pgTable("banners", {
+  id,
+  secureUrl: text("secure_url").notNull(),
+  publicId: text("public_id").notNull(),
+  createdAt,
+  updatedAt,
+});

@@ -17,7 +17,7 @@ export function NavigateHeading({
     <Link href={link}>
       <div
         className={cn(
-          "mb-6 flex items-center gap-2 py-2 text-lg font-semibold md:text-xl",
+          "mb-1 flex items-center gap-2 py-2 text-lg font-semibold md:text-xl",
           className,
         )}
       >
@@ -37,7 +37,7 @@ export function Heading({
   return (
     <div
       className={cn(
-        "text-primary relative mb-10 flex items-center justify-center py-2 text-xl font-bold md:text-2xl",
+        "text-primary relative flex items-center justify-center py-2 text-base font-bold md:py-6 md:text-xl",
         className,
       )}
     >

@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronRight, Edit, Plus, Trash } from "lucide-react";
 import Link from "next/link";
-import { ReactNode, useState } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -46,19 +46,30 @@ export function CategoriesListing() {
               <div className="text-2xl font-semibold">{cat.productCount}</div>
             </div>
           </Link>
-          <DeleteCategoryDialog categoryId={cat.id}>
-            <Button variant={"ghost"} className="absolute top-1 right-10 z-10">
-              <Trash />
-            </Button>
-          </DeleteCategoryDialog>
-          <UpdateCategoryDialog
-            categoryId={cat.id}
-            categoryName={cat.categoryName}
-          >
-            <Button variant={"ghost"} className="absolute top-1 right-1 z-10">
-              <Edit />
-            </Button>
-          </UpdateCategoryDialog>
+          {cat.categoryName !== "Home" && (
+            <Fragment>
+              {" "}
+              <DeleteCategoryDialog categoryId={cat.id}>
+                <Button
+                  variant={"ghost"}
+                  className="absolute top-1 right-10 z-10"
+                >
+                  <Trash />
+                </Button>
+              </DeleteCategoryDialog>
+              <UpdateCategoryDialog
+                categoryId={cat.id}
+                categoryName={cat.categoryName}
+              >
+                <Button
+                  variant={"ghost"}
+                  className="absolute top-1 right-1 z-10"
+                >
+                  <Edit />
+                </Button>
+              </UpdateCategoryDialog>
+            </Fragment>
+          )}
         </div>
       ))}
       <div className="from-background to-accent flex aspect-square items-center justify-center rounded-md bg-linear-to-r">

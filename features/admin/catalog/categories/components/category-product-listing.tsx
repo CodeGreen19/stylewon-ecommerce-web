@@ -55,7 +55,7 @@ export function CaetegoryProdutListing({ categoryId }: { categoryId: string }) {
         queryKey: [categoryId],
       });
       qc.invalidateQueries({
-        queryKey: ["categories"],
+        queryKey: ["categories", "marketing-categories"],
       });
       toast.success("Category products updated");
     },

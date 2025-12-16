@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import { Lexend } from "next/font/google";
-import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import Providers from "@/tanstack-query/providers";
+import type { Metadata } from "next";
+import { Nunito } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import "./globals.css";
 
-const lexend = Lexend({
-  variable: "--font-lexend",
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -23,9 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={` ${lexend.variable} font-lexend dark font-normal antialiased`}
+        className={` ${nunito.variable} font-nunito dark font-normal antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <NuqsAdapter>{children}</NuqsAdapter>
+        </Providers>
         <Toaster closeButton />
       </body>
     </html>

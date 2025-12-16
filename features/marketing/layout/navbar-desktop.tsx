@@ -13,11 +13,21 @@ import { User as UserType } from "better-auth";
 import { ChevronDown, Search, ShoppingCartIcon, User } from "lucide-react";
 import Link from "next/link";
 import { CartWrapper } from "../components/cart/cart-wrapper";
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "../server/queries";
+import { Spinner } from "@/components/ui/spinner";
+import { CategoryCheckBox } from "../components/shared/category-checkbox";
+import { useRouter } from "next/navigation";
+
 type UserSession = {
   isPending: boolean;
   user: UserType | undefined;
 };
 export function NavbarDesktop(session: UserSession) {
+  const categoryQuery = useQuery({
+    queryKey: ["marketing-categories", "categories"],
+    queryFn: () => getCategories(),
+  });
   const isMobile = useIsMobile();
   return (
     <div className="flex items-center justify-between">
@@ -25,28 +35,38 @@ export function NavbarDesktop(session: UserSession) {
         <Logo />
       </section>
       <section className="space-x-1">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant={"ghost"}>
-              Categories <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {categoryQuery.isPending ? (
+          <Button variant={"ghost"}>
+            Categories <Spinner />
+          </Button>
+        ) : categoryQuery.error ? (
+          <Button variant={"ghost"}>Categories</Button>
+        ) : categoryQuery.data.length === 0 ? (
+          <Button variant={"ghost"}>Categories</Button>
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={"ghost"}>
+                Categories <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <CategoryCheckBox data={categoryQuery.data} />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+
         <Link href={"/products"}>
           {" "}
           <Button variant={"ghost"}>Products</Button>
         </Link>
       </section>
       <section className="flex items-center justify-center gap-1">
-        <Button>
-          Search <Search />
-        </Button>
+        <Link href={"/products"}>
+          <Button>
+            Search <Search />
+          </Button>
+        </Link>
         <CartWrapper>
           <Button>
             Cart <ShoppingCartIcon />

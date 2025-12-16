@@ -1,23 +1,24 @@
-"use cache";
+"use cache: private";
 
 import { getQueryClient } from "@/tanstack-query/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { Hero } from "../components/home/hero";
-import { HomeCategories } from "../components/home/home-categories";
+import { HeroCarousel } from "../components/home/hero-carousel";
 import { HomeProductListing } from "../components/home/home-product-listing";
-import { getProducts } from "../server/queries";
+import { getCategories, getMarketingProducts } from "../server/queries";
 
 export default async function HomePage() {
   const qc = getQueryClient();
   void qc.prefetchQuery({
     queryKey: ["marketing-products"],
-    queryFn: () => getProducts(),
+    queryFn: () => getMarketingProducts(),
   });
+
   return (
-    <HydrationBoundary state={dehydrate(qc)}>
-      <Hero />
-      <HomeCategories />
-      <HomeProductListing />
-    </HydrationBoundary>
+    <main>
+      <HydrationBoundary state={dehydrate(qc)}>
+        <HeroCarousel />
+        <HomeProductListing />
+      </HydrationBoundary>
+    </main>
   );
 }
