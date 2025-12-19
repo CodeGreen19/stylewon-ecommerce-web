@@ -1,5 +1,5 @@
-import React from "react";
+import InventoryPage from "@/features/admin/catalog/inventory/pages/inventory-page";
 
 export default function page() {
-  return <div>inventory</div>;
+  return <InventoryPage />;
 }

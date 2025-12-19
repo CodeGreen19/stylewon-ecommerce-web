@@ -1,7 +1,8 @@
 "use server";
 
 import { db } from "@/drizzle/db";
-import { defaultDeliveryCharge } from "@/drizzle/schema";
+import { banners, defaultDeliveryCharge } from "@/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 export async function getDeliverCharge() {
   const [res] = await db.select().from(defaultDeliveryCharge);
@@ -26,4 +27,21 @@ export async function updateDeliverCharge({
       outsideDhaka: Number(outsideDhaka),
     });
   }
+}
+
+//======================== banner ===============================//
+
+export async function uploadBanner(
+  info: { imageUrl: string; redirectTo: string }[],
+) {
+  await db.insert(banners).values(info);
+  return { message: "Banner uploaded" };
+}
+export async function getBanner() {
+  const res = await db.select().from(banners);
+  return res;
+}
+export async function deleteBanner(bannerId: string) {
+  const res = await db.delete(banners).where(eq(banners.id, bannerId));
+  return res;
 }

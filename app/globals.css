@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./../css/default-descriptions.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -150,3 +151,9 @@
   color: blue !important;
   cursor: pointer;
 }
+
+/* html descriptions  */
+
+/* #html_descriptions p {
+  
+} */

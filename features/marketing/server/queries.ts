@@ -93,3 +93,20 @@ export async function getCategories() {
   const filteredCat = cat.filter((c) => c.categoryName !== "Home");
   return filteredCat;
 }
+
+//-------------------------get all categories------------------------//
+export async function getRelatedProducts(productId: string) {
+  const existed = await db.query.categoriesWithProducts.findFirst({
+    where: eq(categoriesWithProducts.productId, productId),
+  });
+
+  let relatedProducts: (typeof products.$inferSelect)[] = [];
+  if (existed) {
+    const res = await db.query.categoriesWithProducts.findMany({
+      where: eq(categoriesWithProducts.categoryId, existed.categoryId),
+      with: { product: true },
+    });
+    relatedProducts = res.map((r) => r.product);
+  }
+  return relatedProducts;
+}

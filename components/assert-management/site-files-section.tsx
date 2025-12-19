@@ -43,7 +43,12 @@ export function SiteFilesSection({
         <ImageCard key={i} publicId={item.publicId} url={item.secureUrl} />
       ))}
       <div className="p-2">
-        <UploadButton folderId={activeFolderId} />
+        <UploadButton
+          folderName={
+            data.find((f) => f.folderId === activeFolderId)?.folderId || ""
+          }
+          folderId={activeFolderId}
+        />
       </div>
     </div>
   );

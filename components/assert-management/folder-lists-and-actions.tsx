@@ -62,12 +62,14 @@ export function FolderLists({
               clearImages();
             }}
             key={folder.id}
-            className="flex items-center gap-2 rounded-none px-2 text-xs"
+            className="flex items-center gap-2 rounded-none px-2 py-2 text-xs"
           >
             <FolderOpen size={16} />{" "}
             <span className="w-[120px] truncate">{folder.folderName}</span>
           </div>
-          <FolderActionButton folderId={folder.id} name={folder.folderName} />
+          {folder.folderName !== "marketing-banner" && (
+            <FolderActionButton folderId={folder.id} name={folder.folderName} />
+          )}
         </div>
       ))}
     </div>

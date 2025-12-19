@@ -31,8 +31,8 @@ export const assertsRelations = relations(asserts, ({ one }) => ({
 
 export const banners = pgTable("banners", {
   id,
-  secureUrl: text("secure_url").notNull(),
-  publicId: text("public_id").notNull(),
+  imageUrl: text("image_url").notNull(),
+  redirectTo: text("redirect_to"),
   createdAt,
   updatedAt,
 });

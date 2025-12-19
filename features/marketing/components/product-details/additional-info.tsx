@@ -15,7 +15,7 @@ export default function AdditionalInfo({ des }: { des: string }) {
             <AdditionalInfoDescriptions des={des} />
           </FieldContent>
         </Field>
-        <Field>
+        {/* <Field>
           <FieldLabel>Reviews</FieldLabel>
           <FieldContent>
             <AdditionalInfoReviews />
@@ -26,7 +26,7 @@ export default function AdditionalInfo({ des }: { des: string }) {
           <FieldContent>
             <AdditionalInfoQNA />
           </FieldContent>
-        </Field>
+        </Field> */}
       </div>
     </div>
   );

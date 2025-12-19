@@ -9,18 +9,24 @@ import { LoadingSwap } from "../ui/loading-swap";
 import imageCompression from "browser-image-compression";
 import { uploadAssert } from "./server/actions";
 
-const options = {
-  maxSizeMB: 0.3,
-  maxWidthOrHeight: 1920,
-  useWebWorker: true,
-};
-
 type UploadType = {
   files: File[];
   setFiles: Dispatch<SetStateAction<File[]>>;
   folderId: string;
+  folderName: string;
 };
-export default function Upload({ files, setFiles, folderId }: UploadType) {
+export default function Upload({
+  files,
+  setFiles,
+  folderId,
+  folderName,
+}: UploadType) {
+  const maxSizeMB = folderName === "marketing-banner" ? 5 : 0.4;
+  const options = {
+    maxSizeMB: maxSizeMB,
+    maxWidthOrHeight: 1920,
+    useWebWorker: true,
+  };
   const qc = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {

@@ -34,6 +34,9 @@ import { useState } from "react";
 import { CartWrapper } from "../components/cart/cart-wrapper";
 import { useGuestUserCart } from "../hooks/use-guest-user-cart";
 import { useRouter } from "next/navigation";
+import { CategoryCheckBox } from "../components/shared/category-checkbox";
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "../server/queries";
 
 type UserSession = {
   isPending: boolean;
@@ -48,6 +51,11 @@ export function NavbarMobile(session: UserSession) {
     useState<DrawarComponnentType>("CATEGORY");
 
   const { guestUserCartItems } = useGuestUserCart();
+
+  const categoryQuery = useQuery({
+    queryKey: ["marketing-categories", "categories"],
+    queryFn: () => getCategories(),
+  });
   return (
     <div className="flex items-center justify-between">
       <section>
@@ -87,14 +95,11 @@ export function NavbarMobile(session: UserSession) {
             >
               <ListChecks /> Categories
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                setOpenDrawer(true);
-                setSelectedDrawerType("SEARCH");
-              }}
-            >
-              <Search /> Search
-            </DropdownMenuItem>
+            <Link href={"/products"}>
+              <DropdownMenuItem>
+                <Search /> Search
+              </DropdownMenuItem>
+            </Link>
             {session.isPending ? (
               <DropdownMenuItem>
                 <Loader2 className="animate-spin" />
@@ -127,7 +132,11 @@ export function NavbarMobile(session: UserSession) {
           </DrawerHeader>
           <div className="p-4">
             {selectedDrawerType === "CATEGORY" ? (
-              <div>Category</div>
+              <div>
+                {categoryQuery.data && (
+                  <CategoryCheckBox data={categoryQuery.data} />
+                )}
+              </div>
             ) : selectedDrawerType == "SEARCH" ? (
               <div>search</div>
             ) : (

@@ -48,9 +48,9 @@ export function CartItemsBox({
         )}
       </div>
       <SheetFooter className="flex flex-row items-center justify-between">
-        <Button variant={"ghost"} className="rounded-full py-6 text-2xl">
+        <div className="rounded-full py-6 text-lg md:text-2xl">
           Total : {total} &#x09F3;
-        </Button>
+        </div>
         <Button
           onClick={() => {
             if (type === "local") {
@@ -62,7 +62,7 @@ export function CartItemsBox({
               onClose();
             }
           }}
-          className="w-32 rounded-full py-6"
+          className="w-32 rounded-full py-4 md:py-6"
         >
           Proceed <ChevronRight />
         </Button>

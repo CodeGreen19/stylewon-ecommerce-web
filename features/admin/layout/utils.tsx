@@ -9,6 +9,7 @@ import {
   LucideIcon,
   Network,
   User,
+  Users,
 } from "lucide-react";
 export type NavMainType = {
   title: string;
@@ -29,6 +30,11 @@ export const adminSidebarNavItems: NavMainType[] = [
         title: "Overviews",
         icon: Album,
         url: "/admin/home/overviews",
+      },
+      {
+        title: "Users",
+        icon: Users,
+        url: "/admin/home/users",
       },
     ],
   },
@@ -66,7 +72,7 @@ export const adminSidebarNavItems: NavMainType[] = [
         ],
       },
       {
-        title: "Console",
+        title: "Marketing console",
         icon: AlbumIcon,
         url: "/admin/catalog/console",
       },

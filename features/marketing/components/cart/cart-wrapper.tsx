@@ -49,7 +49,7 @@ export function CartWrapper({ children }: { children: ReactNode }) {
           </span>
         </span>
       </SheetTrigger>
-      <SheetContent className="gap-0 overflow-y-auto sm:max-w-lg">
+      <SheetContent className="w-4/5 gap-0 overflow-y-auto md:w-md">
         {session.isPending ? (
           <Loading />
         ) : session.data ? (

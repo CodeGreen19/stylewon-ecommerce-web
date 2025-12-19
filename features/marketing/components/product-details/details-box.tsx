@@ -15,8 +15,9 @@ import { useProductSelection } from "../../hooks/use-product-selection";
 import { productDetails } from "../../server/queries";
 import AdditionalInfo from "./additional-info";
 import { QtyAndAddToCart } from "./qty-and-add-to-cart";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function DetailsBox({ id }: { id: string }) {
+export function DetailsBox({ id }: { id: string }) {
   const {
     selectedImage,
     selectedColor,
@@ -132,5 +133,66 @@ export default function DetailsBox({ id }: { id: string }) {
       </div>
       <AdditionalInfo des={product.description || ""} />
     </section>
+  );
+}
+
+export function DetailsBoxSkeleton() {
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        {/* LEFT: Image Section */}
+        <div className="space-y-4">
+          {/* Main Image */}
+          <Skeleton className="aspect-square w-full rounded-xl" />
+
+          {/* Thumbnails */}
+          <div className="flex gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="size-16 shrink-0 rounded-lg" />
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT: Product Info */}
+        <div className="flex flex-col gap-6">
+          {/* Title */}
+          <Skeleton className="h-8 w-2/3 rounded-md" />
+
+          {/* Sizes */}
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-16" />
+            <div className="flex gap-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-20 rounded-lg" />
+              ))}
+            </div>
+          </div>
+
+          {/* Colors */}
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-16" />
+            <div className="flex gap-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-24 rounded-lg" />
+              ))}
+            </div>
+          </div>
+
+          {/* Quantity + Price */}
+          <div className="flex items-center gap-6">
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-10 rounded-md" />
+              <Skeleton className="h-10 w-10 rounded-md" />
+              <Skeleton className="h-10 w-10 rounded-md" />
+            </div>
+
+            <Skeleton className="h-6 w-20 rounded-md" />
+          </div>
+
+          {/* Add to Cart Button */}
+          <Skeleton className="h-14 w-full rounded-full" />
+        </div>
+      </div>
+    </div>
   );
 }

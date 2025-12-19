@@ -1,31 +1,29 @@
+"use cache";
 import Error from "@/components/shared/error";
+import Loading from "@/components/shared/loading";
 import { getQueryClient } from "@/tanstack-query/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import {
-  DetailsBox,
-  DetailsBoxSkeleton,
-} from "../components/product-details/details-box";
-import { RelatedProducts } from "../components/product-details/related-products";
-import { productDetails } from "../server/queries";
+import InventoryHeading from "../components/inventory-heading";
+import { InventoryListingTable } from "../components/inventory-listing-table";
+import { getInventory } from "../queries";
 
-export default async function ProductDetailsPage({ slug }: { slug: string }) {
+export default async function InventoryPage() {
   const qc = getQueryClient();
   void qc.prefetchQuery({
-    queryKey: ["marketing-product-details", slug],
-    queryFn: () => productDetails(slug),
+    queryKey: ["inventory"],
+    queryFn: () => getInventory(),
   });
-
   return (
     <div>
+      <InventoryHeading />
       <HydrationBoundary state={dehydrate(qc)}>
         <ErrorBoundary fallback={<Error />}>
-          <Suspense fallback={<DetailsBoxSkeleton />}>
-            <DetailsBox id={slug} />
+          <Suspense fallback={<Loading />}>
+            <InventoryListingTable />
           </Suspense>
         </ErrorBoundary>
-        <RelatedProducts productId={slug} />
       </HydrationBoundary>
     </div>
   );

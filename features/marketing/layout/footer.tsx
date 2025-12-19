@@ -1,3 +1,5 @@
+import ThemeToggle from "@/components/shared/toggle-theme";
+
 export default function Footer() {
   return (
     <footer className="mt-10 border-t border-dashed">
@@ -33,6 +35,7 @@ export default function Footer() {
               <li>Terms of Service</li>
             </ul>
           </div>
+          <ThemeToggle />
         </div>
         <div className="text-foreground mt-10 flex justify-between border-t border-dashed pt-5 text-sm">
           <p>© 2025 ModernShop. All rights reserved.</p>

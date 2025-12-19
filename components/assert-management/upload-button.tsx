@@ -19,9 +19,11 @@ import Upload from "./upload";
 export function UploadButton({
   className,
   folderId,
+  folderName,
 }: {
   className?: string;
   folderId: string;
+  folderName: string;
 }) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [cropped, setCropped] = useState<Blob | null>(null);
@@ -86,6 +88,7 @@ export function UploadButton({
             folderId={folderId}
             files={selectedFiles}
             setFiles={setSelectedFiles}
+            folderName={folderName}
           />
         )}
       </DialogContent>

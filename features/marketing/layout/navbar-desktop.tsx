@@ -3,21 +3,19 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { AuthDialogWrapper } from "@/features/auth/components/auth-dialog-wrapper";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useQuery } from "@tanstack/react-query";
 import { User as UserType } from "better-auth";
 import { ChevronDown, Search, ShoppingCartIcon, User } from "lucide-react";
 import Link from "next/link";
 import { CartWrapper } from "../components/cart/cart-wrapper";
-import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "../server/queries";
-import { Spinner } from "@/components/ui/spinner";
 import { CategoryCheckBox } from "../components/shared/category-checkbox";
-import { useRouter } from "next/navigation";
+import { getCategories } from "../server/queries";
 
 type UserSession = {
   isPending: boolean;
